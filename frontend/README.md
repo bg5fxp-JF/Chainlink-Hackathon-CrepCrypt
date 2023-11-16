@@ -1,34 +1,52 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
-
 ## Getting Started
 
-First, run the development server:
+First, make sure to install all the dependencies:
+
+```bash
+npm install
+```
+
+You can now, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Key Features of Next.js That you may find different from your expeience with React.js
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+1. **File-System Based Router**: Next.js uses a file-system based router, where folders are used to define routes and files create the UI for each route segment.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+2. **Route Segments**: Each folder in a route signifies a route segment, corresponding to a segment in a URL path.
 
-## Learn More
+3. **Nested Routes**: Nested routes can be created by nesting folders within each other.
 
-To learn more about Next.js, take a look at the following resources:
+4. **Special Files**: Next.js offers special files like `layout.js`, `page.js` for specific UI behaviors in nested routes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Breif Description of The folder stucture for this porject (feel free to give better suggestions for cleaner code)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **`app`**: Root directory for the Next.js application.
+- **`components`**: This directory stores global components used across the application, as well as components specific to the home page.
 
-## Deploy on Vercel
+- **`constants`**: Contains files that define constants used throughout the application.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **`[name of page]`**: A directory for each specific page in the application.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+  - **`components`**: Inside each page directory, there's a `components` folder for storing components that are specific to that particular page.
+
+  - **`page.js`**: Contains the page-specific logic and layout.
+
+## Tailwind CSS Configuration Overview
+
+We'll also be using [Tailwind CSS]("https://v2.tailwindcss.com/docs") if you haven't used this before don't worry its fairly simple.
+
+With Next Js we can set up a Tailwind configuration file so we don't have to repeat themes throughout. Here's a breif explanation:
+
+- **Theme Customization**:
+
+  - **Screens**: Defines custom breakpoints for responsive design:
+    - `xxs` to `xl` with specified pixel values.
+  - **Font Family**: Customizes the font family, with `Roboto` set as the primary font.
+  - **Font Sizes**: Sets custom font sizes ranging from `2xsm` to `10xl`.
+
+- **Extended Styles**:
+  - **Colors**: Defines custom color palette, including `primaryColor`, `secondaryColor`, and two accent colors.
