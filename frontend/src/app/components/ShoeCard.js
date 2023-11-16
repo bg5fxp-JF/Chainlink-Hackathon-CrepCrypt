@@ -4,7 +4,7 @@ import React from "react";
 export default function ShoeCard({ img, title, price }) {
 	return (
 		<div className="group pt-10 space-y-3 w-[200px] sm:w-[300px]  mx-auto md:w-full cursor-pointer ">
-			<div class="overflow-hidden">
+			<div className="overflow-hidden">
 				<Image
 					src={img}
 					width={300}

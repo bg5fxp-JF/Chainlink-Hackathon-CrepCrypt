@@ -17,7 +17,7 @@ export default function DiscoverSection() {
 					return <ShoeCard key={id} img={img} title={title} price={price} />;
 				})}
 			</div>
-			<div class="flex mx-auto ">
+			<div className="flex mx-auto ">
 				<CustomButton
 					text="View All"
 					styles="text-white bg-primaryColor mx-auto"

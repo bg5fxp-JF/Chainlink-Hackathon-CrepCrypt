@@ -21,7 +21,7 @@ const ShuffleHero = () => {
 					providing a transparent and trustworthy platform for buyers and
 					sellers.
 				</p>
-				<div class="flex gap-x-4">
+				<div className="flex gap-x-4">
 					<CustomButton text="Buy Shoes" styles="text-white bg-primaryColor" />
 					<CustomButton text="List Shoes" styles="text-white bg-primaryColor" />
 				</div>
