@@ -4,7 +4,7 @@ import FAQAccordion from "./FAQAccordion";
 
 export default function FAQSection() {
 	return (
-		<section className="w-full sm:px-16 px-6 pt-24 pb-12 flex flex-row  gap-x-28 max-w-[1440px] mx-auto">
+		<section className="w-full sm:px-16 px-6 pt-24 pb-12 flex flex-col md:flex-row gap-y-5  gap-x-28 max-w-[1440px] mx-auto">
 			<div>
 				<span className="block mb-4 text-xs md:text-sm text-primaryColor font-medium ">
 					What would you like to know?

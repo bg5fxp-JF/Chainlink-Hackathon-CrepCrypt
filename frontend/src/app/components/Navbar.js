@@ -1,15 +1,33 @@
+"use client";
+import { AnimatePresence, motion, useCycle } from "framer-motion";
 import CustomButton from "./CustomButton";
 import Link from "next/link";
+import { IoIosClose, IoMdMenu } from "react-icons/io";
+import { FiMenu, FiX } from "react-icons/fi";
+
+import { useState } from "react";
 
 export default function Navbar() {
+	const variants = {
+		hidden: {
+			opacity: 0,
+		},
+		show: {
+			opacity: 1,
+		},
+	};
+
+	const [isOpen, toggleOpen] = useState(false);
+
 	return (
 		<header className="w-full  absolute z-10">
-			<nav className="max-w-[1440px] mx-auto flex justify-between items-center sm:px-16 px-6 py-4 bg-transparent">
-				<div className="flex gap-x-10 items-center justify-between">
+			<nav className="max-w-[1440px] mx-auto flex justify-between items-center sm:px-16 px-6 py-4 bg-transparent ">
+				<div className="flex gap-x-10 items-center justify-between ">
 					<Link href="/" className="text-2xl font-bold">
 						CrepCrypt
 					</Link>
-					<div className="flex gap-x-5 text-accent2">
+
+					<div className="hidden md:flex gap-x-5 text-accent2">
 						<Link href="/" className="text-reg">
 							Buy Shoes
 						</Link>
@@ -18,12 +36,45 @@ export default function Navbar() {
 						</Link>
 					</div>
 				</div>
-
+				<FiMenu
+					onClick={() => toggleOpen(!isOpen)}
+					size={20}
+					className={`flex  md:hidden cursor-pointer ${isOpen ? "hidden" : ""}`}
+				/>
+				<FiX
+					size={20}
+					onClick={() => toggleOpen(!isOpen)}
+					className={`flex md:hidden cursor-pointer ${isOpen ? "" : "hidden"}`}
+				/>
 				<CustomButton
 					text="Connect Wallet"
-					styles="text-white bg-primaryColor"
+					styles="text-white bg-primaryColor hidden md:flex"
 				/>
 			</nav>
+			<AnimatePresence mode="wait">
+				<motion.div
+					initial="hidden"
+					animate={isOpen ? "show" : "hidden"}
+					exit="hidden"
+					variants={variants}
+				>
+					<div
+						id="menu"
+						className="absolute flex-col items-center flex self-end py-8 space-y-6  bg-white sm:w-auto sm:self-center left-6 right-6 drop-shadow  z-40"
+					>
+						<Link href="/" className="text-reg">
+							Buy Shoes
+						</Link>
+						<Link href="/" className="text-reg ">
+							List Shoes
+						</Link>
+						<CustomButton
+							text="Connect Wallet"
+							styles="text-white bg-primaryColor flex md:hidden "
+						/>
+					</div>
+				</motion.div>
+			</AnimatePresence>
 		</header>
 	);
 }
