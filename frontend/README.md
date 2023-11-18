@@ -1,6 +1,12 @@
 ## Getting Started
 
-First, make sure to install all the dependencies:
+First, make sure to you're in the right directory:
+
+```bash
+cd frontend
+```
+
+Next, make sure to install all the dependencies:
 
 ```bash
 npm install
