@@ -26,14 +26,14 @@ function generateSquares() {
 			key={sq.id}
 			layout
 			transition={{ duration: 1.5, type: "spring" }}
-			className="w-full h-full rounded-md shadow-2xl relative "
+			className="relative w-full h-full rounded-md shadow-2xl"
 			style={{
 				backgroundImage: `url(${sq.src})`,
 				backgroundSize: "cover",
 			}}
 		>
 			<div className=" absolute bottom-6  left-1/2 transform -translate-x-1/2 min-w-[50%] ">
-				<div className=" text-reg mx-auto flex items-center justify-center px-4 py-2  rounded-full border border-primaryColor bg-white bg-opacity-70 text-primaryColor font-bold">
+				<div className="flex items-center justify-center border mx-auto px-4 py-2 text-reg font-bold rounded-full border-primaryColor bg-white bg-opacity-70 text-primaryColor ">
 					Buy
 				</div>
 			</div>

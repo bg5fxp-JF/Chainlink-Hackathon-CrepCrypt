@@ -3,13 +3,13 @@ import React from "react";
 
 export default function ShoeCard({ img, title, price }) {
 	return (
-		<div className="group pt-10 space-y-3 w-[200px] sm:w-[300px]  mx-auto md:w-full cursor-pointer ">
+		<div className="group w-[200px] space-y-3  mx-auto pt-10 cursor-pointer sm:w-[300px] md:w-full">
 			<div className="overflow-hidden rounded-lg">
 				<Image
 					src={img}
 					width={300}
 					height={300}
-					className=" object-contain rounded-lg   transition-all group-hover:scale-125 overflow-hidden"
+					className=" object-contain overflow-hidden rounded-lg transition-all group-hover:scale-125"
 					alt="Shoe Card"
 					priority={true}
 				/>

@@ -4,14 +4,14 @@ import RevolutionaryCard from "./RevolutionaryCard";
 
 export default function RevolutionarySection() {
 	return (
-		<section className="w-full sm:px-16 px-6 pt-24 pb-12 items-center gap-8 max-w-[1440px] mx-auto">
-			<span className="block mb-4 text-xs md:text-sm text-primaryColor font-medium mx-auto text-center">
+		<section className="w-full max-w-[1440px] items-center gap-8  mx-auto px-6 pt-24 pb-12 sm:px-16  ">
+			<span className="block mx-auto mb-4 text-xs font-medium text-center text-primaryColor md:text-sm">
 				Revolutionary
 			</span>
-			<h3 className="text-4xl md:text-6xl font-semibold mx-auto text-center">
+			<h3 className="mx-auto text-4xl font-semibold text-center md:text-6xl">
 				Track Shoe Ownership with NFTs on our Marketplace
 			</h3>
-			<div className="flex flex-col md:flex-row gap-10 pb-12 mx-auto ">
+			<div className="flex flex-col gap-10 mx-auto pb-12 md:flex-row">
 				{RevolutionaryData.map(({ img, title, text }) => {
 					return (
 						<RevolutionaryCard

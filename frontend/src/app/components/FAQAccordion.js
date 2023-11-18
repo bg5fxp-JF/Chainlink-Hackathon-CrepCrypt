@@ -6,12 +6,12 @@ import { FaChevronUp, FaChevronDown } from "react-icons/fa";
 export default function FAQAccordion({ title, text }) {
 	const [isOpen, setIsOpen] = useState(false);
 	return (
-		<div className="border rounded-lg overflow-hidden shadow-md w-full">
+		<div className="w-full overflow-hidden border rounded-lg shadow-md">
 			<div
-				className="cursor-pointer bg-gray-200 p-4 flex justify-between items-center"
+				className="flex justify-between items-center p-4 bg-gray-200 cursor-pointer"
 				onClick={() => setIsOpen(!isOpen)}
 			>
-				<span className="flex font-medium">{title}</span>
+				<span className="font-medium">{title}</span>
 				<span>{isOpen ? <FaChevronUp /> : <FaChevronDown />}</span>
 			</div>
 

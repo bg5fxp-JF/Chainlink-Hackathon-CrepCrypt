@@ -20,14 +20,14 @@ export default function Navbar() {
 	const [isOpen, toggleOpen] = useState(false);
 
 	return (
-		<header className="w-full  absolute z-10">
-			<nav className="max-w-[1440px] mx-auto flex justify-between items-center sm:px-16 px-6 py-4 bg-transparent ">
+		<header className="w-full absolute z-10">
+			<nav className="flex justify-between items-center max-w-[1440px] mx-auto px-6 py-4 bg-transparent sm:px-16">
 				<div className="flex gap-x-10 items-center justify-between ">
 					<Link href="/" className="text-2xl font-bold">
 						CrepCrypt
 					</Link>
 
-					<div className="hidden md:flex gap-x-5 text-accent2">
+					<div className="hidden gap-x-5 text-accent2 md:flex">
 						<Link href="/" className="text-reg">
 							Buy Shoes
 						</Link>
@@ -48,7 +48,7 @@ export default function Navbar() {
 				/>
 				<CustomButton
 					text="Connect Wallet"
-					styles="text-white bg-primaryColor hidden md:flex"
+					styles="hidden text-white bg-primaryColor  md:flex"
 				/>
 			</nav>
 			<AnimatePresence mode="wait">
@@ -60,7 +60,7 @@ export default function Navbar() {
 				>
 					<div
 						id="menu"
-						className="absolute flex-col items-center flex self-end py-8 space-y-6  bg-white sm:w-auto sm:self-center left-6 right-6 drop-shadow  z-40"
+						className="absolute flex flex-col items-center self-end left-6 right-6 z-40 space-y-6 py-8 bg-white drop-shadow  sm:w-auto sm:self-center"
 					>
 						<Link href="/" className="text-reg">
 							Buy Shoes
@@ -70,7 +70,7 @@ export default function Navbar() {
 						</Link>
 						<CustomButton
 							text="Connect Wallet"
-							styles="text-white bg-primaryColor flex md:hidden "
+							styles="flex text-white bg-primaryColor md:hidden "
 						/>
 					</div>
 				</motion.div>

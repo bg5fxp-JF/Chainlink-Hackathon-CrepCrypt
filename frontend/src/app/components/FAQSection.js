@@ -4,12 +4,12 @@ import FAQAccordion from "./FAQAccordion";
 
 export default function FAQSection() {
 	return (
-		<section className="w-full sm:px-16 px-6 pt-24 pb-12 flex flex-col md:flex-row gap-y-5  gap-x-28 max-w-[1440px] mx-auto">
+		<section className="flex flex-col w-full max-w-[1440px] gap-y-5 mx-auto px-6 pt-24 pb-12 md:flex-row md:gap-x-28 sm:px-16">
 			<div>
-				<span className="block mb-4 text-xs md:text-sm text-primaryColor font-medium ">
+				<span className="block mb-4 text-xs font-medium text-primaryColor md:text-sm">
 					What would you like to know?
 				</span>
-				<h3 className="text-4xl md:text-6xl font-semibold">
+				<h3 className="text-4xl font-semibold  md:text-6xl">
 					Frequently Asked Questions
 				</h3>
 				<p className="font-light text-reg text-accent2">
