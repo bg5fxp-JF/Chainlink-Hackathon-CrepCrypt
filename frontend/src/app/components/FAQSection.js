@@ -1,4 +1,3 @@
-import React from "react";
 import { FAQData } from "../constants/constants";
 import FAQAccordion from "./FAQAccordion";
 
@@ -6,7 +5,7 @@ export default function FAQSection() {
 	return (
 		<section className="flex flex-col w-full max-w-[1440px] gap-y-5 mx-auto px-6 pt-24 pb-12 md:flex-row md:gap-x-28 sm:px-16">
 			<div>
-				<span className="block mb-4 text-xs font-medium text-primaryColor md:text-sm">
+				<span className="block mb-4 text-sm font-medium text-primaryColor">
 					What would you like to know?
 				</span>
 				<h3 className="text-4xl font-semibold  md:text-6xl">

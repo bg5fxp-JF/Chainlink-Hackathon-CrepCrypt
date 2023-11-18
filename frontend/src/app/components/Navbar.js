@@ -1,8 +1,7 @@
 "use client";
-import { AnimatePresence, motion, useCycle } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import CustomButton from "./CustomButton";
 import Link from "next/link";
-import { IoIosClose, IoMdMenu } from "react-icons/io";
 import { FiMenu, FiX } from "react-icons/fi";
 
 import { useState } from "react";
@@ -28,7 +27,7 @@ export default function Navbar() {
 					</Link>
 
 					<div className="hidden gap-x-5 text-accent2 md:flex">
-						<Link href="/" className="text-reg">
+						<Link href="/shoes" className="text-reg">
 							Buy Shoes
 						</Link>
 						<Link href="/" className="text-reg ">

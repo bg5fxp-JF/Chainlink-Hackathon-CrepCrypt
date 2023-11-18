@@ -1,4 +1,3 @@
-import React from "react";
 import { ShoeDummyData } from "../constants/constants";
 import ShoeCard from "./ShoeCard";
 import CustomButton from "./CustomButton";
@@ -13,13 +12,14 @@ export default function DiscoverSection() {
 				Shoes
 			</h3>
 			<div className="flex flex-col gap-5 pb-12 md:flex-row">
-				{ShoeDummyData.map(({ id, img, title, price }) => {
+				{ShoeDummyData.slice(0, 4).map(({ id, img, title, price }) => {
 					return <ShoeCard key={id} img={img} title={title} price={price} />;
 				})}
 			</div>
 			<div className="flex mx-auto">
 				<CustomButton
 					text="View All"
+					link="/shoes"
 					styles="mx-auto text-white bg-primaryColor"
 				/>
 			</div>
