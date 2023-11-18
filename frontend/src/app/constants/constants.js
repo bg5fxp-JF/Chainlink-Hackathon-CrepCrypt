@@ -89,6 +89,54 @@ export const ShoeDummyData = [
 		title: "Shoe Dummy",
 		price: "300 USDC",
 	},
+	{
+		id: 5,
+		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
+		title: "Shoe Dummy",
+		price: "300 USDC",
+	},
+	{
+		id: 6,
+		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
+		title: "Shoe Dummy",
+		price: "300 USDC",
+	},
+	{
+		id: 7,
+		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
+		title: "Shoe Dummy",
+		price: "300 USDC",
+	},
+	{
+		id: 8,
+		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
+		title: "Shoe Dummy",
+		price: "300 USDC",
+	},
+	{
+		id: 9,
+		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
+		title: "Shoe Dummy",
+		price: "300 USDC",
+	},
+	{
+		id: 10,
+		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
+		title: "Shoe Dummy",
+		price: "300 USDC",
+	},
+	{
+		id: 11,
+		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
+		title: "Shoe Dummy",
+		price: "300 USDC",
+	},
+	{
+		id: 12,
+		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
+		title: "Shoe Dummy",
+		price: "300 USDC",
+	},
 ];
 
 export const RevolutionaryData = [
