@@ -1,13 +1,17 @@
 import Image from "next/image";
+import Link from "next/link";
 
-export default function ShoeCard({ img, title, price }) {
+export default function ShoeCard({ id, img, title, price }) {
 	return (
-		<div className="group w-[200px] space-y-3  mx-auto pt-10 cursor-pointer sm:w-[300px] md:w-full">
+		<Link
+			href={`/shoes/${title}?id=${id}`}
+			className="group max-w-[400px] space-y-3 mx-auto pt-10 cursor-pointer  sm:w-full "
+		>
 			<div className="overflow-hidden rounded-lg">
 				<Image
 					src={img}
-					width={300}
-					height={300}
+					width={400}
+					height={400}
 					className=" object-contain overflow-hidden rounded-lg transition-all group-hover:scale-125"
 					alt="Shoe Card"
 					priority={true}
@@ -19,6 +23,6 @@ export default function ShoeCard({ img, title, price }) {
 			</div>
 
 			<p className="font-bold text-lg ">{price}</p>
-		</div>
+		</Link>
 	);
 }
