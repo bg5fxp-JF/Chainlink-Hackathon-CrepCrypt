@@ -11,9 +11,12 @@ export default function DiscoverSection() {
 			<h3 className="mx-auto text-center text-4xl font-semibold md:text-6xl">
 				Shoes
 			</h3>
-			<div className="flex flex-col gap-5 pb-12 md:flex-row">
+
+			<div className="grid justify-between gap-5 grid-cols-1 pb-12 sm:grid-cols-2 md:grid-cols-4 ">
 				{ShoeDummyData.slice(0, 4).map(({ id, img, title, price }) => {
-					return <ShoeCard key={id} img={img} title={title} price={price} />;
+					return (
+						<ShoeCard key={id} id={id} img={img} title={title} price={price} />
+					);
 				})}
 			</div>
 			<div className="flex mx-auto">
