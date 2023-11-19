@@ -15,9 +15,45 @@ export default function page() {
 					price.
 				</p>
 			</div>
-			<div className="grid justify-between gap-5 grid-cols-1  md:grid-cols-3 xl:grid-cols-4">
+			<div className="flex justify-end">
+				<div class="flex gap-x-4">
+					<select
+						id="brands"
+						className="block w-full border p-2.5 text-sm bg-gray-200 rounded-lg shadow-md"
+					>
+						<option selected>Brands</option>
+						<option value="J">Jordans</option>
+						<option value="A">Addidas</option>
+						<option value="G">Gucci</option>
+						<option value="B">Balenciaga</option>
+					</select>
+					<select
+						id="sizes"
+						className="block w-full border p-2.5 text-sm bg-gray-200 rounded-lg shadow-md"
+					>
+						<option selected>Sizes</option>
+						<option value="5">5</option>
+						<option value="6">6</option>
+						<option value="7">7</option>
+						<option value="8">8</option>
+					</select>
+					<select
+						id="prices"
+						className="block w-full border p-2.5 text-sm bg-gray-200 rounded-lg shadow-md"
+					>
+						<option selected>Prices</option>
+						<option value="5">Under 100</option>
+						<option value="6">100 - 200</option>
+						<option value="7">200 - 300</option>
+						<option value="8">300 +</option>
+					</select>
+				</div>
+			</div>
+			<div className="grid justify-between gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 				{ShoeDummyData.map(({ id, img, title, price }) => {
-					return <ShoeCard key={id} img={img} title={title} price={price} />;
+					return (
+						<ShoeCard key={id} id={id} img={img} title={title} price={price} />
+					);
 				})}
 			</div>
 		</div>
