@@ -20,7 +20,11 @@ export default function ShuffleHero() {
 						link="/shoes"
 						styles="text-white bg-primaryColor"
 					/>
-					<CustomButton text="List Shoes" styles="text-white bg-primaryColor" />
+					<CustomButton 
+						text="List Shoes" 
+						link="/listshoes"
+						styles="text-white bg-primaryColor" 
+					/>
 				</div>
 			</div>
 			<ShuffleGrid />
