@@ -1,8 +1,18 @@
-export default function page({ params }) {
-	const shoe = params.slug.replace(/%20/g, " ");
-	return (
-		<div className="flex flex-col w-full max-w-[1440px] gap-8 mx-auto px-6 pt-24 pb-12 sm:px-16">
-			<h2 className="capitalize">{shoe}</h2>
-		</div>
-	);
+import { ShoeDummyData } from "@/app/constants/constants";
+import ShoeDetails from "./compponents/ShoeDetails";
+
+export async function generateMetadata({ searchParams }) {
+	// read route params
+	const id = searchParams.id;
+
+	const shoeData = ShoeDummyData.find((item) => item.id == id);
+
+	return {
+		title: `CrepCrypt | ${shoeData.title}`,
+		description: shoeData.title,
+	};
+}
+
+export default function page() {
+	return <ShoeDetails />;
 }
