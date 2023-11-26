@@ -178,10 +178,10 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
 
     // TODO: Jacob - Complete function to allow a user who has called `listNFT` to remove their NFT from the marketplace
     function unlistNft(uint256 tokenId) external {
-        if (metadata[tokenId].currentOwner != msg.sender)
-            revert("Not the owner");
-        if (metadata[tokenId].redeemable.amount != 0)
-            revert("NFT is already sold");
+        Metadata memory tempData = metadata[tokenId];
+
+        if (tempData.currentOwner != msg.sender) revert("Not the owner");
+        if (tempData.redeemable.amount != 0) revert("NFT is already sold");
         // get listing fee back
         (bool success, ) = payable(msg.sender).call{value: fee}("");
         if (!success) revert("unsuccessful payment");
@@ -197,8 +197,8 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         string memory newDescription,
         string memory newUri
     ) external payable {
-        if (metadata[tokenId].currentOwner != msg.sender)
-            revert("Not the owner");
+        Metadata memory tempData = metadata[tokenId];
+        if (tempData.currentOwner != msg.sender) revert("Not the owner");
         if (msg.value != fee) {
             revert("Fee is not correct");
         }
@@ -211,11 +211,11 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
 
         // Init args for ChatGPT req
         string[] memory args = new string[](3);
-        args[0] = metadata[tokenId].tokenURI;
+        args[0] = tempData.tokenURI;
         args[1] = newDescription;
         args[2] = newUri;
 
-        metadata[tokenId].description = newDescription;
+        tempData.description = newDescription;
 
         safeTransferFrom(msg.sender, address(this), tokenId);
 
@@ -228,7 +228,9 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         );
 
         // Store metada for NFT
-        metadata[tokenId].lastReqId = reqId;
+        tempData.lastReqId = reqId;
+
+        metadata[tokenId] = tempData;
 
         // Store request ID for NFT
         requestIdToTokenId[reqId] = tokenId;
@@ -290,6 +292,8 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
 
         // Store updated metadata
         tempData.redeemable = tempRedeemable;
+
+        metadata[tokenId] = tempData;
     }
 
     function confirmSale(uint256 tokenId, bool status) external {
@@ -303,17 +307,19 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
             // Transfer NFT to buyer
             safeTransferFrom(address(this), tempSale.buyer, tokenId);
 
+            Metadata memory tempData = metadata[tokenId];
+
             // Transfer payment to seller
-            if (metadata[tokenId].redeemable.token == address(0)) {
+            if (tempData.redeemable.token == address(0)) {
                 (bool success, ) = payable(tempSale.seller).call{
-                    value: metadata[tokenId].redeemable.amount
+                    value: tempData.redeemable.amount
                 }("");
                 if (!success) revert("unsuccessful payment");
             } else {
                 require(
-                    IERC20(metadata[tokenId].redeemable.token).transfer(
+                    IERC20(tempData.redeemable.token).transfer(
                         tempSale.seller,
-                        metadata[tokenId].redeemable.amount
+                        tempData.redeemable.amount
                     )
                 );
             }
