@@ -30,7 +30,7 @@ export default function Navbar() {
 						<Link href="/shoes" className="text-reg">
 							Buy Shoes
 						</Link>
-						<Link href="/" className="text-reg ">
+						<Link href="/listshoes" className="text-reg ">
 							List Shoes
 						</Link>
 					</div>
