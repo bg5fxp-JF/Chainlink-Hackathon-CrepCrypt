@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: MIT
 pragma solidity 0.8.21;
 
 import {FunctionsClient} from "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/FunctionsClient.sol";
@@ -51,12 +52,7 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
     mapping(uint256 => Metadata) public metadata;
     mapping(bytes32 => uint256) public requestIdToTokenId;
 
-    constructor(
-        address _router,
-        bytes32 _donID,
-        uint64 _subscriptionId,
-        address _ethUsd
-    )
+    constructor(address _router, bytes32 _donID, uint64 _subscriptionId, address _ethUsd)
         FunctionsClient(_router)
         ERC721("CrepCrypt", "CC")
         ConfirmedOwner(msg.sender)
@@ -66,11 +62,7 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         ETHUSD = _ethUsd;
     }
 
-    function listNFT(
-        uint256 price,
-        string memory tokenURI,
-        string memory description
-    ) external payable {
+    function listNFT(uint256 price, string memory tokenURI, string memory description) external payable {
         if (msg.value != fee) {
             revert("Fee is not correct");
         }
@@ -102,12 +94,7 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         });
 
         // Send request to Functions oracle
-        bytes32 reqId = _sendRequest(
-            req.encodeCBOR(),
-            subscriptionId,
-            gasLimit,
-            donID
-        );
+        bytes32 reqId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, donID);
 
         // Store metada for NFT
         tempData.lastReqId = reqId;
@@ -119,11 +106,7 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
 
     /// @dev We don't revert in this function because we want to keep track of failed requests
     // and return the NFT tp the owner in certain cases
-    function fulfillRequest(
-        bytes32 requestId,
-        bytes memory response,
-        bytes memory /*err*/
-    ) internal override {
+    function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory /*err*/ ) internal override {
         uint256 tokenId = requestIdToTokenId[requestId];
 
         // Check if the request ID is valid
@@ -145,11 +128,7 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
             // If the NFT exists we transfer it back to the owner
             // TODO: Integration test to check this doesn't exceed functions gas limit
             if (exists) {
-                transferFrom(
-                    address(this),
-                    metadata[tokenId].currentOwner,
-                    tokenId
-                );
+                transferFrom(address(this), metadata[tokenId].currentOwner, tokenId);
             }
 
             // End early if the request failed
@@ -167,21 +146,52 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
     }
 
     // TODO: Jacob - Complete function to allow a user who has called `listNFT` to remove their NFT from the marketplace
-    function unlistNft(uint256 tokenId) external {}
+    function unlistNft(uint256 tokenId) external {
+        if (metadata[tokenId].currentOwner == address(0)) revert("invalid tokenId");
+        if (metadata[tokenId].currentOwner != msg.sender) revert("Not the owner");
+        delete metadata[tokenId];
+        // get listing fee back
+        (bool success,) = payable(msg.sender).call{value: fee}("");
+        if (!success) revert("unsuccessful payment");
+    }
 
     // TODO: Jacob - Complete function to allow a user who owns an NFT to relist it on the marketplace. Code will be similar to `listNFT`
     // 1. They will need to pay fee again
     // 2. They will need to update the metadata
     // 3. They will need to send a new request to the oracle
     // 4. They will need to transfer the NFT to the contract
-    function relistNft(uint256 tokenId) external {}
+    function relistNft(uint256 tokenId, string memory newDescription) external payable {
+        if (metadata[tokenId].currentOwner == address(0)) revert("invalid tokenId");
+        if (metadata[tokenId].currentOwner != msg.sender) revert("Not the owner");
+        if (msg.value != fee) {
+            revert("Fee is not correct");
+        }
+        if (bytes(newDescription).length == 0) {
+            revert("Description is not correct");
+        }
+
+        FunctionsRequest.Request memory req;
+        req.initializeRequestForInlineJavaScript(sourceCode);
+
+        // Init args for ChatGPT req
+        string[] memory args = new string[](2);
+        args[0] = metadata[tokenId].tokenURI;
+        args[1] = newDescription;
+
+        metadata[tokenId].description = newDescription;
+
+        // Send request to Functions oracle
+        bytes32 reqId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, donID);
+
+        // Store metada for NFT
+        metadata[tokenId].lastReqId = reqId;
+
+        // Store request ID for NFT
+        requestIdToTokenId[reqId] = tokenId;
+    }
 
     // Buy NFTs
-    function buyNft(
-        uint256 tokenId,
-        address token,
-        uint256 amount
-    ) external payable {
+    function buyNft(uint256 tokenId, address token, uint256 amount) external payable {
         bool ethPayment = msg.value > 0;
 
         Metadata memory tempData = metadata[tokenId];
@@ -190,38 +200,24 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         // Check the user has supplied sufficient payment
         if (ethPayment) {
             require(msg.value == tempData.price);
-            tempRedeemable = Redeemable({
-                token: address(0),
-                amount: tempData.price
-            });
+            tempRedeemable = Redeemable({token: address(0), amount: tempData.price});
         } else {
             require(msg.value == 0);
             require(token != address(0));
             require(amount != 0);
 
             // Get latest price of ETH in USD
-            (, int256 ethPrice, , , ) = AggregatorV3Interface(ETHUSD)
-                .latestRoundData();
+            (, int256 ethPrice,,,) = AggregatorV3Interface(ETHUSD).latestRoundData();
 
             // Calculate how much Stablecoin is needed to buy the NFT
             /// @dev All x/USD pairs have 8 decimals in Chainlink Data Feeds
             // TODO: Check this calculation is correct
-            uint256 stablecoinPrice = (tempData.price * 1e8) /
-                uint256(ethPrice);
+            uint256 stablecoinPrice = (tempData.price * 1e8) / uint256(ethPrice);
 
-            tempRedeemable = Redeemable({
-                token: token,
-                amount: stablecoinPrice
-            });
+            tempRedeemable = Redeemable({token: token, amount: stablecoinPrice});
 
             // Transfer Stablecoin from buyer to contract
-            require(
-                IERC20(token).transferFrom(
-                    msg.sender,
-                    address(this),
-                    stablecoinPrice
-                )
-            );
+            require(IERC20(token).transferFrom(msg.sender, address(this), stablecoinPrice));
         }
 
         // Store updated metadata
