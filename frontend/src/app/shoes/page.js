@@ -1,5 +1,10 @@
 import ShoeCard from "../components/ShoeCard";
 import { ShoeDummyData } from "../constants/constants";
+export const metadata = {
+	title: "CrepCrypt | Buy Shoes",
+	description:
+		"A decentralized marketplace that utilizes AI and cutting-edge blockchain technology to ensure secure ownership of listed shoes.",
+};
 
 export default function page() {
 	return (
