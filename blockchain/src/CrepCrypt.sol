@@ -13,6 +13,7 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
 
     event UnexpectedRequestID(bytes32 requestId);
     event ListingFailed(uint256 tokenId);
+    event SaleConfirmed(uint256 tokenId, bool status);
 
     // Price Feed Config
     AggregatorV3Interface internal dataFeed;
@@ -27,6 +28,14 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
     // NFT Config
     // TODO: Think of how to set it price
     uint256 public constant fee = 0.1 ether;
+
+    struct Sale {
+        address buyer;
+        address seller;
+        bool buyerApproved;
+    }
+
+    mapping(uint256 tokenId => Sale) public sales;
 
     struct Redeemable {
         address token;
@@ -52,7 +61,12 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
     mapping(uint256 => Metadata) public metadata;
     mapping(bytes32 => uint256) public requestIdToTokenId;
 
-    constructor(address _router, bytes32 _donID, uint64 _subscriptionId, address _ethUsd)
+    constructor(
+        address _router,
+        bytes32 _donID,
+        uint64 _subscriptionId,
+        address _ethUsd
+    )
         FunctionsClient(_router)
         ERC721("CrepCrypt", "CC")
         ConfirmedOwner(msg.sender)
@@ -62,7 +76,11 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         ETHUSD = _ethUsd;
     }
 
-    function listNFT(uint256 price, string memory tokenURI, string memory description) external payable {
+    function listNFT(
+        uint256 price,
+        string memory tokenURI,
+        string memory description
+    ) external payable {
         if (msg.value != fee) {
             revert("Fee is not correct");
         }
@@ -94,7 +112,12 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         });
 
         // Send request to Functions oracle
-        bytes32 reqId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, donID);
+        bytes32 reqId = _sendRequest(
+            req.encodeCBOR(),
+            subscriptionId,
+            gasLimit,
+            donID
+        );
 
         // Store metada for NFT
         tempData.lastReqId = reqId;
@@ -106,7 +129,11 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
 
     /// @dev We don't revert in this function because we want to keep track of failed requests
     // and return the NFT tp the owner in certain cases
-    function fulfillRequest(bytes32 requestId, bytes memory response, bytes memory /*err*/ ) internal override {
+    function fulfillRequest(
+        bytes32 requestId,
+        bytes memory response,
+        bytes memory /*err*/
+    ) internal override {
         uint256 tokenId = requestIdToTokenId[requestId];
 
         // Check if the request ID is valid
@@ -116,7 +143,7 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         }
 
         // Check if NFT exists
-        bool exists = ownerOf(tokenId) == address(0);
+        bool exists = _ownerOf(tokenId) != address(0);
 
         /// @dev We expect our ChatGPT prompt to return '1' if the request is successful
         uint8 responseCode = abi.decode(response, (uint8));
@@ -128,7 +155,11 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
             // If the NFT exists we transfer it back to the owner
             // TODO: Integration test to check this doesn't exceed functions gas limit
             if (exists) {
-                transferFrom(address(this), metadata[tokenId].currentOwner, tokenId);
+                transferFrom(
+                    address(this),
+                    metadata[tokenId].currentOwner,
+                    tokenId
+                );
             }
 
             // End early if the request failed
@@ -147,11 +178,12 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
 
     // TODO: Jacob - Complete function to allow a user who has called `listNFT` to remove their NFT from the marketplace
     function unlistNft(uint256 tokenId) external {
-        if (metadata[tokenId].currentOwner == address(0)) revert("invalid tokenId");
-        if (metadata[tokenId].currentOwner != msg.sender) revert("Not the owner");
-        delete metadata[tokenId];
+        if (metadata[tokenId].currentOwner != msg.sender)
+            revert("Not the owner");
+        if (metadata[tokenId].redeemable.amount != 0)
+            revert("NFT is already sold");
         // get listing fee back
-        (bool success,) = payable(msg.sender).call{value: fee}("");
+        (bool success, ) = payable(msg.sender).call{value: fee}("");
         if (!success) revert("unsuccessful payment");
     }
 
@@ -160,9 +192,13 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
     // 2. They will need to update the metadata
     // 3. They will need to send a new request to the oracle
     // 4. They will need to transfer the NFT to the contract
-    function relistNft(uint256 tokenId, string memory newDescription) external payable {
-        if (metadata[tokenId].currentOwner == address(0)) revert("invalid tokenId");
-        if (metadata[tokenId].currentOwner != msg.sender) revert("Not the owner");
+    function relistNft(
+        uint256 tokenId,
+        string memory newDescription,
+        string memory newUri
+    ) external payable {
+        if (metadata[tokenId].currentOwner != msg.sender)
+            revert("Not the owner");
         if (msg.value != fee) {
             revert("Fee is not correct");
         }
@@ -174,14 +210,22 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         req.initializeRequestForInlineJavaScript(sourceCode);
 
         // Init args for ChatGPT req
-        string[] memory args = new string[](2);
+        string[] memory args = new string[](3);
         args[0] = metadata[tokenId].tokenURI;
         args[1] = newDescription;
+        args[2] = newUri;
 
         metadata[tokenId].description = newDescription;
 
+        safeTransferFrom(msg.sender, address(this), tokenId);
+
         // Send request to Functions oracle
-        bytes32 reqId = _sendRequest(req.encodeCBOR(), subscriptionId, gasLimit, donID);
+        bytes32 reqId = _sendRequest(
+            req.encodeCBOR(),
+            subscriptionId,
+            gasLimit,
+            donID
+        );
 
         // Store metada for NFT
         metadata[tokenId].lastReqId = reqId;
@@ -191,7 +235,11 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
     }
 
     // Buy NFTs
-    function buyNft(uint256 tokenId, address token, uint256 amount) external payable {
+    function buyNft(
+        uint256 tokenId,
+        address token,
+        uint256 amount
+    ) external payable {
         bool ethPayment = msg.value > 0;
 
         Metadata memory tempData = metadata[tokenId];
@@ -200,31 +248,83 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         // Check the user has supplied sufficient payment
         if (ethPayment) {
             require(msg.value == tempData.price);
-            tempRedeemable = Redeemable({token: address(0), amount: tempData.price});
+            tempRedeemable = Redeemable({
+                token: address(0),
+                amount: tempData.price
+            });
         } else {
             require(token != address(0));
             require(amount != 0);
 
             // Get latest price of ETH in USD
-            (, int256 ethPrice,,,) = AggregatorV3Interface(ETHUSD).latestRoundData();
+            (, int256 ethPrice, , , ) = AggregatorV3Interface(ETHUSD)
+                .latestRoundData();
 
             // Calculate how much Stablecoin is needed to buy the NFT
             /// @dev All x/USD pairs have 8 decimals in Chainlink Data Feeds
             // TODO: Check this calculation is correct
-            uint256 stablecoinPrice = (tempData.price * 1e8) / uint256(ethPrice);
+            uint256 stablecoinPrice = (tempData.price * 1e8) /
+                uint256(ethPrice);
 
-            tempRedeemable = Redeemable({token: token, amount: stablecoinPrice});
+            tempRedeemable = Redeemable({
+                token: token,
+                amount: stablecoinPrice
+            });
 
             // Transfer Stablecoin from buyer to contract
-            require(IERC20(token).transferFrom(msg.sender, address(this), stablecoinPrice));
+            require(
+                IERC20(token).transferFrom(
+                    msg.sender,
+                    address(this),
+                    stablecoinPrice
+                )
+            );
         }
+
+        // Create sale
+        sales[tokenId] = Sale({
+            buyer: msg.sender,
+            seller: tempData.currentOwner,
+            buyerApproved: false
+        });
 
         // Store updated metadata
         tempData.redeemable = tempRedeemable;
     }
 
-    // TODO: Confirm sale function // Confirm the sale (both parties need to confirm)
+    function confirmSale(uint256 tokenId, bool status) external {
+        Sale memory tempSale = sales[tokenId];
 
+        if (tempSale.seller != msg.sender) revert("Not the buyer");
+
+        tempSale.buyerApproved = status;
+
+        if (status) {
+            // Transfer NFT to buyer
+            safeTransferFrom(address(this), tempSale.buyer, tokenId);
+
+            // Transfer payment to seller
+            if (metadata[tokenId].redeemable.token == address(0)) {
+                (bool success, ) = payable(tempSale.seller).call{
+                    value: metadata[tokenId].redeemable.amount
+                }("");
+                if (!success) revert("unsuccessful payment");
+            } else {
+                require(
+                    IERC20(metadata[tokenId].redeemable.token).transfer(
+                        tempSale.seller,
+                        metadata[tokenId].redeemable.amount
+                    )
+                );
+            }
+        }
+
+        // ADD logic to reset metadata
+
+        emit SaleConfirmed(tokenId, status);
+    }
+
+    function finaliseSale(uint256 tokenId, bool status) external onlyOwner {}
     // Unlist NFTs
     // Reclaim listing fee
     // Withdraw funds
