@@ -117,6 +117,8 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         requestIdToTokenId[reqId] = tokenId;
     }
 
+    /// @dev We don't revert in this function because we want to keep track of failed requests
+    // and return the NFT tp the owner in certain cases
     function fulfillRequest(
         bytes32 requestId,
         bytes memory response,
@@ -124,21 +126,24 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
     ) internal override {
         uint256 tokenId = requestIdToTokenId[requestId];
 
+        // Check if the request ID is valid
         if (tokenId == 0) {
-            emit UnexpectedRequestID(requestId); // Check if request IDs match
+            emit UnexpectedRequestID(requestId);
             return;
         }
 
         // Check if NFT exists
         bool exists = ownerOf(tokenId) == address(0);
 
-        // Validate GPT Response
+        /// @dev We expect our ChatGPT prompt to return '1' if the request is successful
         uint8 responseCode = abi.decode(response, (uint8));
 
+        // Check if the request was successful
         if (responseCode != 1) {
             emit ListingFailed(tokenId);
 
-            // If the NFT exists it means the request failed, so we need to transfer it back to the owner
+            // If the NFT exists we transfer it back to the owner
+            // TODO: Integration test to check this doesn't exceed functions gas limit
             if (exists) {
                 transferFrom(
                     address(this),
@@ -147,6 +152,7 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
                 );
             }
 
+            // End early if the request failed
             return;
         }
 
@@ -155,6 +161,7 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
 
         // If the NFT doens't exist yet, mint it
         if (!exists) {
+            // TODO: Integration test to check this doesn't exceed functions gas limit
             _mint(address(this), tokenId);
         }
     }
