@@ -3,8 +3,9 @@ pragma solidity 0.8.21;
 import {FunctionsClient} from "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/FunctionsClient.sol";
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
 import {FunctionsRequest} from "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/libraries/FunctionsRequest.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {ERC721Enumerable, ERC721} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
     using FunctionsRequest for FunctionsRequest.Request;
@@ -12,40 +13,49 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
     event UnexpectedRequestID(bytes32 requestId);
     event ListingFailed(uint256 tokenId);
 
-    /**
-        Functions Config
-     */
-    //Callback gas limit
+    // Price Feed Config
+    AggregatorV3Interface internal dataFeed;
+    address immutable ETHUSD;
+
+    // Functions Config
     uint32 gasLimit = 300000;
     bytes32 donID;
     uint64 subscriptionId;
+    string sourceCode = "";
 
+    // NFT Config
     // TODO: Think of how to set it price
     uint256 public constant fee = 0.1 ether;
 
-    string sourceCode = "";
+    struct Redeemable {
+        address token;
+        uint256 amount;
+    }
 
     struct Metadata {
+        // Price NFT owner wants to sell for
         uint256 price;
-        string tokenURI;
-        string description;
-        string name;
-        string size;
+        // Number of previous owners
         uint256 previousOwners;
+        // Functions request ID for latest listing request
         bytes32 lastReqId;
+        // Current owner of NFT
         address currentOwner;
+        // IPFS URI for NFT image
+        string tokenURI;
+        // Description of Shoe (e.g. Nike Air Force 1 Size 10)
+        string description;
+        Redeemable redeemable;
     }
 
     mapping(uint256 => Metadata) public metadata;
     mapping(bytes32 => uint256) public requestIdToTokenId;
 
-    address nft;
-
     constructor(
         address _router,
         bytes32 _donID,
         uint64 _subscriptionId,
-        address _nft
+        address _ethUsd
     )
         FunctionsClient(_router)
         ERC721("CrepCrypt", "CC")
@@ -53,15 +63,13 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
     {
         donID = _donID;
         subscriptionId = _subscriptionId;
-        nft = _nft;
+        ETHUSD = _ethUsd;
     }
 
     function listNFT(
         uint256 price,
         string memory tokenURI,
-        string memory description,
-        string memory name,
-        string memory size
+        string memory description
     ) external payable {
         if (msg.value != fee) {
             revert("Fee is not correct");
@@ -69,24 +77,17 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         if (bytes(tokenURI).length == 0) {
             revert("Token URI is not correct");
         }
-        if (bytes(name).length == 0) {
-            revert("Name is not correct");
-        }
         if (bytes(description).length == 0) {
             revert("Description is not correct");
-        }
-        if (bytes(size).length == 0) {
-            revert("Size is not correct");
         }
 
         FunctionsRequest.Request memory req;
         req.initializeRequestForInlineJavaScript(sourceCode);
 
         // Init args for ChatGPT req
-        string[] memory args = new string[](3);
+        string[] memory args = new string[](2);
         args[0] = tokenURI;
         args[1] = description;
-        args[2] = name;
 
         uint256 tokenId = totalSupply() + 1;
 
@@ -94,11 +95,10 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
             price: price,
             tokenURI: tokenURI,
             description: description,
-            name: name,
-            size: size,
             previousOwners: 0,
             lastReqId: 0x0,
-            currentOwner: msg.sender
+            currentOwner: msg.sender,
+            redeemable: Redeemable({token: address(0), amount: 0})
         });
 
         // Send request to Functions oracle
@@ -170,8 +170,58 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
     function relistNft(uint256 tokenId) external {}
 
     // Buy NFTs
+    function buyNft(
+        uint256 tokenId,
+        address token,
+        uint256 amount
+    ) external payable {
+        bool ethPayment = msg.value > 0;
+
+        Metadata memory tempData = metadata[tokenId];
+        Redeemable memory tempRedeemable;
+
+        // Check the user has supplied sufficient payment
+        if (ethPayment) {
+            require(msg.value == tempData.price);
+            tempRedeemable = Redeemable({
+                token: address(0),
+                amount: tempData.price
+            });
+        } else {
+            require(msg.value == 0);
+            require(token != address(0));
+            require(amount != 0);
+
+            // Get latest price of ETH in USD
+            (, int256 ethPrice, , , ) = AggregatorV3Interface(ETHUSD)
+                .latestRoundData();
+
+            // Calculate how much Stablecoin is needed to buy the NFT
+            /// @dev All x/USD pairs have 8 decimals in Chainlink Data Feeds
+            // TODO: Check this calculation is correct
+            uint256 stablecoinPrice = (tempData.price * 1e8) /
+                uint256(ethPrice);
+
+            tempRedeemable = Redeemable({
+                token: token,
+                amount: stablecoinPrice
+            });
+
+            // Transfer Stablecoin from buyer to contract
+            require(
+                IERC20(token).transferFrom(
+                    msg.sender,
+                    address(this),
+                    stablecoinPrice
+                )
+            );
+        }
+
+        // Store updated metadata
+        tempData.redeemable = tempRedeemable;
+    }
+
     // Unlist NFTs
-    // Relist NFTs
     // Reclaim listing fee
     // Withdraw funds
     // Confirm the sale (both parties need to confirm)
