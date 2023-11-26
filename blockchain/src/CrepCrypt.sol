@@ -195,7 +195,6 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
                 amount: tempData.price
             });
         } else {
-            require(msg.value == 0);
             require(token != address(0));
             require(amount != 0);
 
@@ -228,9 +227,10 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         tempData.redeemable = tempRedeemable;
     }
 
+    // TODO: Confirm sale function // Confirm the sale (both parties need to confirm)
+
     // Unlist NFTs
     // Reclaim listing fee
     // Withdraw funds
-    // Confirm the sale (both parties need to confirm)
     // Update metadata
 }
