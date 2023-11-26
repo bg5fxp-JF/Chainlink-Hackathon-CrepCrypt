@@ -7,8 +7,14 @@ import {FunctionsRequest} from "@chainlink/contracts/src/v0.8/functions/dev/v1_0
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {ERC721Enumerable, ERC721} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
+contract CrepCrypt is
+    FunctionsClient,
+    ERC721Enumerable,
+    ConfirmedOwner,
+    ReentrancyGuard
+{
     using FunctionsRequest for FunctionsRequest.Request;
 
     event UnexpectedRequestID(bytes32 requestId);
@@ -215,8 +221,10 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         args[1] = newDescription;
         args[2] = newUri;
 
+        // Update description in metadata
         tempData.description = newDescription;
 
+        // Transfer NFT to contract
         safeTransferFrom(msg.sender, address(this), tokenId);
 
         // Send request to Functions oracle
@@ -227,9 +235,10 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
             donID
         );
 
-        // Store metada for NFT
+        // Store latest request ID for NFT
         tempData.lastReqId = reqId;
 
+        // Store metadata for NFT
         metadata[tokenId] = tempData;
 
         // Store request ID for NFT
@@ -296,17 +305,14 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
         metadata[tokenId] = tempData;
     }
 
-    function confirmSale(uint256 tokenId, bool status) external {
+    function confirmSale(uint256 tokenId, bool status) external nonReentrant {
         Sale memory tempSale = sales[tokenId];
 
-        if (tempSale.seller != msg.sender) revert("Not the buyer");
+        if (tempSale.buyer != msg.sender) revert("Not the buyer");
 
         tempSale.buyerApproved = status;
 
         if (status) {
-            // Transfer NFT to buyer
-            safeTransferFrom(address(this), tempSale.buyer, tokenId);
-
             Metadata memory tempData = metadata[tokenId];
 
             // Transfer payment to seller
@@ -323,6 +329,9 @@ contract CrepCrypt is FunctionsClient, ERC721Enumerable, ConfirmedOwner {
                     )
                 );
             }
+
+            // Transfer NFT to buyer
+            safeTransferFrom(address(this), msg.sender, tokenId);
         }
 
         // ADD logic to reset metadata
