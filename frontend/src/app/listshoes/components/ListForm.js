@@ -1,14 +1,13 @@
 
 export default function ListForm() {
     
-    const submtForm = (e) => {
-        // e.preventDefault()
+    const submtForm = () => {
         console.log('submit form ran')
     }
      
     return (
         <div>
-            <form className="flex flex-col items-center justify-center" onSubmit={console.log('submit form ran')}>
+            <form className="flex flex-col items-center justify-center" onSubmit={submtForm}>
                 <label className="text-xl font-bold">Name of Shoe</label>
                 <input
                     className="border-2 border-gray-400 rounded-lg p-2 m-2"
