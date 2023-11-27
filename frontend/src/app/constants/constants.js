@@ -69,73 +69,132 @@ export const ShoeDummyData = [
 		id: 1,
 		img: "https://i.ebayimg.com/thumbs/images/g/nLoAAOSw~NRklLg8/s-l300.webp",
 		title: "Shoe Dummy",
-		price: "300 USDC",
+		price: "562 USDC",
+		description:
+			"Brand: Lorem Ipsum | Size: 10 | Description: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae magnam quibusdam, recusandae unde nisi expedita ratione enim. Ipsa in explicabo aliquam vero ipsam, sapiente laudantium perspiciatis beatae. Eligendi, molestiae accusamus.",
+		current_owner: "0xd74a47fb78b91215319f47a5c8239ebfd9793e61",
+		previous_owners: 8,
 	},
 	{
 		id: 2,
 		img: "https://i.ebayimg.com/thumbs/images/g/9l8AAOSwms5lP6g6/s-l300.webp",
 		title: "Shoe Dummy",
-		price: "300 USDC",
+		price: "608 USDC",
+		description:
+			"Brand: Lorem Ipsum | Size: 10 | Description: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae magnam quibusdam, recusandae unde nisi expedita ratione enim. Ipsa in explicabo aliquam vero ipsam, sapiente laudantium perspiciatis beatae. Eligendi, molestiae accusamus.",
+
+		current_owner: "0x8943a1e68a7acb8a8842daeeecfb1a215dfa4b16",
+		previous_owners: 8,
 	},
 	{
 		id: 3,
 		img: "https://i.ebayimg.com/thumbs/images/g/NTUAAOSw37RlU~-j/s-l300.webp",
 		title: "Shoe Dummy",
-		price: "300 USDC",
+		price: "273 USDC",
+		description:
+			"Brand: Lorem Ipsum | Size: 10 | Description: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae magnam quibusdam, recusandae unde nisi expedita ratione enim. Ipsa in explicabo aliquam vero ipsam, sapiente laudantium perspiciatis beatae. Eligendi, molestiae accusamus.",
+
+		current_owner: "0xe536af4d84368d847561938ebaa12901520e21ab",
+		previous_owners: 10,
 	},
 	{
 		id: 4,
 		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
 		title: "Shoe Dummy",
-		price: "300 USDC",
+		price: "639 USDC",
+		description:
+			"Brand: Lorem Ipsum | Size: 10 | Description: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae magnam quibusdam, recusandae unde nisi expedita ratione enim. Ipsa in explicabo aliquam vero ipsam, sapiente laudantium perspiciatis beatae. Eligendi, molestiae accusamus.",
+
+		current_owner: "0xcc6cfe1a015ecce15176bfabaa2473728da0898f",
+		previous_owners: 4,
 	},
 	{
 		id: 5,
 		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
 		title: "Shoe Dummy",
-		price: "300 USDC",
+		price: "891 USDC",
+		description:
+			"Brand: Lorem Ipsum | Size: 10 | Description: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae magnam quibusdam, recusandae unde nisi expedita ratione enim. Ipsa in explicabo aliquam vero ipsam, sapiente laudantium perspiciatis beatae. Eligendi, molestiae accusamus.",
+
+		current_owner: "0xf483239337ee6528504f3296e243aa2f9d4adb32",
+		previous_owners: 10,
 	},
 	{
 		id: 6,
 		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
 		title: "Shoe Dummy",
-		price: "300 USDC",
+		price: "327 USDC",
+		description:
+			"Brand: Lorem Ipsum | Size: 10 | Description: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae magnam quibusdam, recusandae unde nisi expedita ratione enim. Ipsa in explicabo aliquam vero ipsam, sapiente laudantium perspiciatis beatae. Eligendi, molestiae accusamus.",
+
+		current_owner: "0xf9f6c5a44480eba10d580f6ebc6e33e12fefd7e7",
+		previous_owners: 6,
 	},
 	{
 		id: 7,
 		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
 		title: "Shoe Dummy",
-		price: "300 USDC",
+		price: "722 USDC",
+		description:
+			"Brand: Lorem Ipsum | Size: 10 | Description: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae magnam quibusdam, recusandae unde nisi expedita ratione enim. Ipsa in explicabo aliquam vero ipsam, sapiente laudantium perspiciatis beatae. Eligendi, molestiae accusamus.",
+
+		current_owner: "0xfc959a7ae1f6e70af5444f9f7339f3394c674d2f",
+		previous_owners: 2,
 	},
 	{
 		id: 8,
 		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
 		title: "Shoe Dummy",
-		price: "300 USDC",
+		price: "390 USDC",
+		description:
+			"Brand: Lorem Ipsum | Size: 10 | Description: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae magnam quibusdam, recusandae unde nisi expedita ratione enim. Ipsa in explicabo aliquam vero ipsam, sapiente laudantium perspiciatis beatae. Eligendi, molestiae accusamus.",
+
+		current_owner: "0x881cd4a92f2eedd6f033d95b899d59a28294f887",
+		previous_owners: 2,
 	},
 	{
 		id: 9,
 		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
 		title: "Shoe Dummy",
-		price: "300 USDC",
+		price: "379 USDC",
+		description:
+			"Brand: Lorem Ipsum | Size: 10 | Description: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae magnam quibusdam, recusandae unde nisi expedita ratione enim. Ipsa in explicabo aliquam vero ipsam, sapiente laudantium perspiciatis beatae. Eligendi, molestiae accusamus.",
+
+		current_owner: "0x9551a77194eb574b0c2d7768214b7f1ad30fde42",
+		previous_owners: 10,
 	},
 	{
 		id: 10,
 		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
 		title: "Shoe Dummy",
-		price: "300 USDC",
+		price: "111 USDC",
+		description:
+			"Brand: Lorem Ipsum | Size: 10 | Description: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae magnam quibusdam, recusandae unde nisi expedita ratione enim. Ipsa in explicabo aliquam vero ipsam, sapiente laudantium perspiciatis beatae. Eligendi, molestiae accusamus.",
+
+		current_owner: "0x1da064f3f3df82a8b2b54375a1038022c96365c1",
+		previous_owners: 10,
 	},
 	{
 		id: 11,
 		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
 		title: "Shoe Dummy",
-		price: "300 USDC",
+		price: "946 USDC",
+		description:
+			"Brand: Lorem Ipsum | Size: 10 | Description: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae magnam quibusdam, recusandae unde nisi expedita ratione enim. Ipsa in explicabo aliquam vero ipsam, sapiente laudantium perspiciatis beatae. Eligendi, molestiae accusamus.",
+
+		current_owner: "0xf76e3099ded005862a34a1138796aff0367b3450",
+		previous_owners: 2,
 	},
 	{
 		id: 12,
 		img: "https://i.ebayimg.com/thumbs/images/g/Zu4AAOSwyRllSzCM/s-l300.webp",
 		title: "Shoe Dummy",
-		price: "300 USDC",
+		price: "361 USDC",
+		description:
+			"Brand: Lorem Ipsum | Size: 10 | Description: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Molestiae magnam quibusdam, recusandae unde nisi expedita ratione enim. Ipsa in explicabo aliquam vero ipsam, sapiente laudantium perspiciatis beatae. Eligendi, molestiae accusamus.",
+
+		current_owner: "0x8d8cabeee4fa0c376aa8e84f5663f7855d3041c9",
+		previous_owners: 2,
 	},
 ];
 

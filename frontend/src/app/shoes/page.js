@@ -10,7 +10,7 @@ export default function page() {
 	return (
 		<div className="flex flex-col w-full max-w-[1440px] gap-8 mx-auto px-6 pt-24 pb-12 sm:px-16">
 			<div>
-				<span className="block mb-4 text-xs font-medium text-primaryColor md:text-sm">
+				<span className="block mb-4 text-xsm font-medium text-primaryColor md:text-sm">
 					Discover
 				</span>
 				<h3 className="text-4xl font-semibold  md:text-6xl">Shoes</h3>
