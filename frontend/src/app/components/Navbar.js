@@ -1,10 +1,11 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
-import CustomButton from "./CustomButton";
 import Link from "next/link";
 import { FiMenu, FiX } from "react-icons/fi";
 
 import { useState } from "react";
+import CustomFunctionButton from "./CustomFunctionButton";
+import ConnectButton from "./ConnectButton";
 
 export default function Navbar() {
 	const variants = {
@@ -45,9 +46,9 @@ export default function Navbar() {
 					onClick={() => toggleOpen(!isOpen)}
 					className={`flex md:hidden cursor-pointer ${isOpen ? "" : "hidden"}`}
 				/>
-				<CustomButton
-					text="Connect Wallet"
-					styles="hidden text-white bg-primaryColor  md:flex"
+				<ConnectButton
+					stylesDisconnected="hidden text-white bg-primaryColor md:flex "
+					stylesConnected="hidden md:flex"
 				/>
 			</nav>
 			<AnimatePresence mode="wait">
@@ -67,9 +68,9 @@ export default function Navbar() {
 						<Link href="/listshoes" className="text-reg ">
 							List Shoes
 						</Link>
-						<CustomButton
-							text="Connect Wallet"
-							styles="flex text-white bg-primaryColor md:hidden "
+						<ConnectButton
+							stylesDisconnected="flex text-white bg-primaryColor md:hidden "
+							stylesConnected="flex md:hidden"
 						/>
 					</div>
 				</motion.div>

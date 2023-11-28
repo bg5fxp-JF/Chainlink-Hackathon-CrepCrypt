@@ -1,4 +1,4 @@
-import CustomButton from "./CustomButton";
+import CustomLinkButton from "./CustomLinkButton";
 import ShuffleGrid from "./ShuffleGrid";
 
 export default function ShuffleHero() {
@@ -15,15 +15,15 @@ export default function ShuffleHero() {
 					ownership of listed shoes.
 				</p>
 				<div className="flex gap-x-4 mx-auto">
-					<CustomButton
+					<CustomLinkButton
 						text="Buy Shoes"
 						link="/shoes"
 						styles="text-white bg-primaryColor"
 					/>
-					<CustomButton 
-						text="List Shoes" 
+					<CustomLinkButton
+						text="List Shoes"
 						link="/listshoes"
-						styles="text-white bg-primaryColor" 
+						styles="text-white bg-primaryColor"
 					/>
 				</div>
 			</div>

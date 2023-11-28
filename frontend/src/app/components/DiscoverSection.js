@@ -1,6 +1,6 @@
 import { ShoeDummyData } from "../constants/constants";
 import ShoeCard from "./ShoeCard";
-import CustomButton from "./CustomButton";
+import CustomLinkButton from "./CustomLinkButton";
 
 export default function DiscoverSection() {
 	return (
@@ -20,7 +20,7 @@ export default function DiscoverSection() {
 				})}
 			</div>
 			<div className="flex mx-auto">
-				<CustomButton
+				<CustomLinkButton
 					text="View All"
 					link="/shoes"
 					styles="mx-auto text-white bg-primaryColor"

@@ -4,7 +4,7 @@ import { ShoeDummyData } from "@/app/constants/constants";
 import Image from "next/image";
 
 import { RiVerifiedBadgeFill } from "react-icons/ri";
-import CustomButton from "@/app/components/CustomButton";
+import CustomLinkButton from "@/app/components/CustomLinkButton";
 
 export default function ShoeDetails() {
 	const searchParams = useSearchParams();
@@ -57,7 +57,7 @@ export default function ShoeDetails() {
 						Description: {description}
 					</h4>
 					{/** TODO: Needs to be changed to for actual Buy Now */}
-					<CustomButton
+					<CustomLinkButton
 						text="Buy Now"
 						styles="flex justify-center text-white mt-4 bg-primaryColor "
 						link="/shoes"
