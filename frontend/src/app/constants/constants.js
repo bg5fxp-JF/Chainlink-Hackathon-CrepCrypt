@@ -219,7 +219,7 @@ export const RevolutionaryData = [
 export const FAQData = [
 	{
 		title: "How does it work?",
-		text: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil, rem. Architecto minima, doloribus modi quisquam aspernatur sit, nobis sint, tenetur facilis porro dolorem quas placeat ratione. Voluptates voluptatibus quam iusto.",
+		text: "wag1",
 	},
 	{
 		title: "How do I list shoes?",
