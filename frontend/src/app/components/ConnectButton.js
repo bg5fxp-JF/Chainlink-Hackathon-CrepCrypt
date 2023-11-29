@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect } from "react";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { IoExitOutline } from "react-icons/io5";
@@ -15,13 +15,25 @@ export default function ConnectButton({ stylesDisconnected, stylesConnected }) {
 
 	const { address, isConnected } = useAccount();
 
+	useEffect(() => {
+		if (isConnected) return;
+		if (typeof window !== "undefined") {
+			if (window.localStorage.getItem("connected")) {
+				connect();
+			}
+		}
+	}, [address]);
+
 	if (isConnected) {
 		return (
 			<div
 				className={`${stylesConnected} rounded-full border-2 border-l-0 border-primaryColor items-center `}
 			>
 				<button
-					onClick={() => disconnect()}
+					onClick={() => {
+						disconnect();
+						window.localStorage.removeItem("connected");
+					}}
 					className="rounded-full w-10 h-8 bg-primaryColor"
 				>
 					<IoExitOutline
@@ -37,7 +49,10 @@ export default function ConnectButton({ stylesDisconnected, stylesConnected }) {
 
 	return (
 		<button
-			onClick={() => connect()}
+			onClick={() => {
+				connect();
+				window.localStorage.setItem("connected", "inject");
+			}}
 			className={`text-reg flex  px-4 py-2  rounded-full transition-all active:scale-95 ${stylesDisconnected} `}
 		>
 			Connect Wallet
