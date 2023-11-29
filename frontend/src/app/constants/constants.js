@@ -219,23 +219,23 @@ export const RevolutionaryData = [
 export const FAQData = [
 	{
 		title: "How does it work?",
-		text: "wag1",
+		text: "With CrepCrypt, you no longer have to worry about knock offs, dishonest descriptions or payment fraud. We use AI vision technology to verify the authenticity and condition of the shoes. If they pass inspection, an NFT is minted for each pair to serve as verification that the shoe is authentic and matches the description provided.",
 	},
 	{
 		title: "How do I list shoes?",
-		text: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil, rem. Architecto minima, doloribus modi quisquam aspernatur sit, nobis sint, tenetur facilis porro dolorem quas placeat ratione. Voluptates voluptatibus quam iusto.",
+		text: "Easy! Simply upload pictures of your shoes following the instructions provided. Our system will scan the pictures and produce an NFT of the item if it passes our tests. You will have to pay a small listing fee, but don't worry, this will be refunded once the item is sold!",
 	},
 
 	{
 		title: "How do I buy shoes?",
-		text: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil, rem. Architecto minima, doloribus modi quisquam aspernatur sit, nobis sint, tenetur facilis porro dolorem quas placeat ratione. Voluptates voluptatibus quam iusto.",
+		text: "Pick the shoes you like, and click buy now. This will take you through to our payment portal, where you'll be able to purchase the shoes using any of our supported cryptocurrencies."
 	},
 	{
 		title: "How does it verify?",
-		text: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil, rem. Architecto minima, doloribus modi quisquam aspernatur sit, nobis sint, tenetur facilis porro dolorem quas placeat ratione. Voluptates voluptatibus quam iusto.",
+		text: "We use AI vision to verify the authenticity and condition of the shoes.",
 	},
 	{
 		title: "Can I see previous owners?",
-		text: "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nihil, rem. Architecto minima, doloribus modi quisquam aspernatur sit, nobis sint, tenetur facilis porro dolorem quas placeat ratione. Voluptates voluptatibus quam iusto.",
+		text: "Absolutely. Thanks to blockchain technology, you can see the entire history of your new shoes' previous owners.",
 	},
 ];
