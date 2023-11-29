@@ -21,12 +21,15 @@ export default function page() {
 				</p>
 			</div>
 			<div className="flex justify-end">
-				<div class="flex gap-x-4">
+				<div className="flex gap-x-4">
 					<select
 						id="brands"
 						className="block w-full border p-2.5 text-sm bg-gray-200 rounded-lg shadow-md"
 					>
-						<option selected>Brands</option>
+						<option disabled selected defaultValue="all">
+							Brands
+						</option>
+						<option defaultValue="all">All</option>
 						<option value="J">Jordans</option>
 						<option value="A">Addidas</option>
 						<option value="G">Gucci</option>
@@ -36,7 +39,10 @@ export default function page() {
 						id="sizes"
 						className="block w-full border p-2.5 text-sm bg-gray-200 rounded-lg shadow-md"
 					>
-						<option selected>Sizes</option>
+						<option disabled selected defaultValue="all">
+							Sizes
+						</option>
+						<option defaultValue="all">All</option>
 						<option value="5">5</option>
 						<option value="6">6</option>
 						<option value="7">7</option>
@@ -46,7 +52,10 @@ export default function page() {
 						id="prices"
 						className="block w-full border p-2.5 text-sm bg-gray-200 rounded-lg shadow-md"
 					>
-						<option selected>Prices</option>
+						<option disabled selected defaultValue="all">
+							Prices
+						</option>
+						<option defaultValue="all">All</option>
 						<option value="5">Under 100</option>
 						<option value="6">100 - 200</option>
 						<option value="7">200 - 300</option>

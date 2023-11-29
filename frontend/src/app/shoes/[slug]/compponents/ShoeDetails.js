@@ -49,12 +49,17 @@ export default function ShoeDetails() {
 					</div>
 					<h4 className="text-lg font-medium  md:text-2xl">{shoeData.price}</h4>
 					<h4 className="text-reg font-light md:text-lg">
-						Previous Owners: {shoeData.previous_owners}
+						<span className="font-medium ">Previous Owners:</span>{" "}
+						{shoeData.previous_owners}
 					</h4>
-					<h4 className="text-reg font-light md:text-lg">Brand: {brand}</h4>
-					<h4 className="text-reg font-light md:text-lg">Size: {size}</h4>
+					<h4 className="text-reg font-light md:text-lg">
+						<span className="font-medium ">Brand:</span> {brand}
+					</h4>
+					<h4 className="text-reg font-light md:text-lg">
+						<span className="font-medium ">Size:</span> {size}
+					</h4>
 					<h4 className=" text-reg font-light md:text-lg">
-						Description: {description}
+						<span className="font-medium ">Description:</span> {description}
 					</h4>
 					{/** TODO: Needs to be changed to for actual Buy Now */}
 					<CustomLinkButton
