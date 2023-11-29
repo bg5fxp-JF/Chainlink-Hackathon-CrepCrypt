@@ -4,7 +4,6 @@ import Link from "next/link";
 import { FiMenu, FiX } from "react-icons/fi";
 
 import { useState } from "react";
-import CustomFunctionButton from "./CustomFunctionButton";
 import ConnectButton from "./ConnectButton";
 
 export default function Navbar() {
