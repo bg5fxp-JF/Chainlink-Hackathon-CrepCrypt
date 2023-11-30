@@ -76,13 +76,11 @@ export default function ListForm() {
                     onChange={handleChange}
                 />
                 {formSubmitted ?
-                    <h1 className="text-2xl font-bold"> Shoe Listed </h1>
+                    <h1 className="text-2xl font-bold"> {formData.name} Listed </h1>
                     : <button
                         className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 m-3 rounded"
                         type="submit"
-                    >
-                        Submit Shoes
-				</button>}
+                    >Submit Shoes</button>}
             </form>
         </div>
     );
