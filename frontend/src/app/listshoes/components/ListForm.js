@@ -62,6 +62,7 @@ export default function ListForm() {
                     type="file"
                     alt="Select pictures"
                     name="image"
+                    multiple
                     value={formData.picture}
                     onChange={handleChange}
                 />
