@@ -9,10 +9,12 @@ import ConnectButton from "./ConnectButton";
 export default function Navbar() {
 	const variants = {
 		hidden: {
+			y: -500,
 			opacity: 0,
 		},
 		show: {
 			opacity: 1,
+			y: 0,
 		},
 	};
 
@@ -61,10 +63,18 @@ export default function Navbar() {
 						id="menu"
 						className="absolute flex flex-col items-center self-end left-6 right-6 z-40 space-y-6 py-8 bg-white drop-shadow  sm:w-auto sm:self-center"
 					>
-						<Link href="/shoes" className="text-reg">
+						<Link
+							onClick={() => toggleOpen(!isOpen)}
+							href="/shoes"
+							className="text-reg"
+						>
 							Buy Shoes
 						</Link>
-						<Link href="/listshoes" className="text-reg ">
+						<Link
+							onClick={() => toggleOpen(!isOpen)}
+							href="/listshoes"
+							className="text-reg "
+						>
 							List Shoes
 						</Link>
 						<ConnectButton

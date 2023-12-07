@@ -7,13 +7,5 @@ export const metadata = {
 };
 
 export default function page() {
-	return (
-		<div>
-			<div className="flex flex-col w-full max-w-[1440px] gap-8 mx-auto px-6 pt-24 pb-12 sm:px-16">
-				<h2 className="capitalize">List Shoe</h2>
-			</div>
-			<ListForm/>
-		</div>
-		
-	);
+	return <ListForm />;
 }
