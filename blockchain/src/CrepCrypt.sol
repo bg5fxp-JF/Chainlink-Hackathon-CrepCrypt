@@ -24,21 +24,22 @@ contract CrepCrypt is
     event SaleRejected(uint256 tokenId);
 
     // Price Feed Config
-    AggregatorV3Interface internal dataFeed;
+    AggregatorV3Interface internal dataFeed =
+        AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306); // ETH USD Sepolia
 
     // Functions Config
     uint32 gasLimit = 300000;
-    bytes32 donID;
-    uint64 subscriptionId;
-    uint8 donHostedSecretsSlotID;
-    uint64 donHostedSecretsVersion;
+    bytes32 donID = "fun-ethereum-sepolia-1";
+    uint64 subscriptionId = 1808;
+    uint8 donHostedSecretsSlotID = 0;
+    uint64 donHostedSecretsVersion = 1701968920;
     string internal source =
         "const openAIRequest = await Functions.makeHttpRequest({\n"
         "  url: 'https://api.openai.com/v1/chat/completions',\n"
         "  method: 'POST',\n"
         "  headers: {\n"
         "    'Content-Type': 'application/json',\n"
-        "    'Authorization': `Bearer ${secrets.openaiKey}`\n"
+        "    'Authorization': `Bearer ${secrets.apiKey}`\n"
         "  },\n"
         "  data: {\n"
         "    'model': 'gpt-4-vision-preview',\n"
@@ -102,19 +103,12 @@ contract CrepCrypt is
     mapping(address => bool) public mediators;
 
     constructor(
-        address _router,
-        bytes32 _donID,
-        uint64 _subscriptionId,
-        address _ethUsd
+        address _router
     )
         FunctionsClient(_router)
         ERC721("CrepCrypt", "CC")
         ConfirmedOwner(msg.sender)
-    {
-        donID = _donID;
-        subscriptionId = _subscriptionId;
-        dataFeed = AggregatorV3Interface(_ethUsd);
-    }
+    {}
 
     function listNFT(
         uint256 price,
@@ -366,10 +360,11 @@ contract CrepCrypt is
         }
     }
 
+    // Called using Chainlink Automation, or manually
     function sellerClaim(uint256 tokenId) external {
         Metadata memory tempData = metadata[tokenId];
-        if (tempData.redeemable.recipient != msg.sender)
-            revert("Not the seller");
+
+        address recipient = tempData.redeemable.recipient;
         if (tempData.redeemable.amount == 0) revert("NFT is not sold");
         if (tempData.redeemable.claimed) revert("Already claimed");
 
@@ -378,14 +373,14 @@ contract CrepCrypt is
 
         /// Transfer payment to seller
         if (tempData.redeemable.token == address(0)) {
-            (bool success, ) = payable(msg.sender).call{
+            (bool success, ) = payable(recipient).call{
                 value: tempData.redeemable.amount
             }("");
             if (!success) revert("unsuccessful payment");
         } else {
             require(
                 IERC20(tempData.redeemable.token).transfer(
-                    msg.sender,
+                    recipient,
                     tempData.redeemable.amount
                 )
             );
@@ -398,36 +393,28 @@ contract CrepCrypt is
         if (tempSale.buyerApproved) revert("Sale already confirmed");
 
         if (status) {
-            Metadata memory tempData = metadata[tokenId];
-
-            // Transfer payment to seller
-            if (tempData.redeemable.token == address(0)) {
-                (bool success, ) = payable(tempSale.seller).call{
-                    value: tempData.redeemable.amount
-                }("");
-                if (!success) revert("unsuccessful payment");
-            } else {
-                require(
-                    IERC20(tempData.redeemable.token).transfer(
-                        tempSale.seller,
-                        tempData.redeemable.amount
-                    )
-                );
-            }
+            // Assign seller as recipient of payment
+            metadata[tokenId].redeemable.recipient = payable(tempSale.seller);
 
             // Transfer NFT to buyer
             safeTransferFrom(address(this), tempSale.buyer, tokenId);
+
+            emit SaleApproved(tokenId);
         } else {
             // Transfer NFT back to seller
             safeTransferFrom(address(this), tempSale.seller, tokenId);
+
+            emit SaleRejected(tokenId);
         }
     }
 
-    // Reclaim listing fee
-    // Withdraw funds
-
+    /// @dev requires tokenId owner to approve this contract
     function retryListing(uint256 tokenId) external {
         Metadata memory tempData = metadata[tokenId];
+
+        // Ensure the NFT exists
+        if (tempData.currentOwner == address(0))
+            revert("TokenID does not exist");
 
         FunctionsRequest.Request memory req;
         req.initializeRequestForInlineJavaScript(source);
