@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity 0.8.21;
+pragma solidity ^0.8.19;
 
 import {FunctionsClient} from "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/FunctionsClient.sol";
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
@@ -8,6 +8,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {ERC721Enumerable, ERC721} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import "forge-std/console.sol";
 
 contract CrepCrypt is
     FunctionsClient,
@@ -22,6 +23,7 @@ contract CrepCrypt is
     event InvalidApiResponse(uint256 tokenId);
     event SaleApproved(uint256 tokenId);
     event SaleRejected(uint256 tokenId);
+    event RequestFulfilled(bytes32 requestId, bytes response);
 
     // Price Feed Config
     AggregatorV3Interface internal dataFeed =
@@ -29,7 +31,8 @@ contract CrepCrypt is
 
     // Functions Config
     uint32 gasLimit = 300000;
-    bytes32 donID = "fun-ethereum-sepolia-1";
+    bytes32 donID =
+        0x66756e2d657468657265756d2d7365706f6c69612d3100000000000000000000;
     uint64 subscriptionId = 1808;
     uint8 donHostedSecretsSlotID = 0;
     uint64 donHostedSecretsVersion = 1701968920;
@@ -115,6 +118,7 @@ contract CrepCrypt is
         string memory tokenURI,
         string memory description
     ) external payable {
+        console.log("Here 0");
         if (msg.value != fee) {
             revert("Fee is not correct");
         }
@@ -124,23 +128,22 @@ contract CrepCrypt is
         if (bytes(description).length == 0) {
             revert("Description is not correct");
         }
-
+        console.log("Here 1");
         FunctionsRequest.Request memory req;
         req.initializeRequestForInlineJavaScript(source);
-
+        console.log("Here 2");
         // Init args for ChatGPT req
         string[] memory args = new string[](2);
-        args[1] = tokenURI;
         args[0] = description;
-
+        args[1] = tokenURI;
         req.setArgs(args);
+        console.log("Here 3");
         req.addDONHostedSecrets(
             donHostedSecretsSlotID,
             donHostedSecretsVersion
         );
-
+        console.log("Here 1");
         uint256 tokenId = totalSupply() + 1;
-
         Metadata memory tempData = Metadata({
             price: price,
             tokenURI: tokenURI,
@@ -155,7 +158,6 @@ contract CrepCrypt is
                 claimed: false
             })
         });
-
         // Send request to Functions oracle
         bytes32 reqId = _sendRequest(
             req.encodeCBOR(),
@@ -163,11 +165,10 @@ contract CrepCrypt is
             gasLimit,
             donID
         );
-
+        console.log("Here 1");
         // Store metada for NFT
         tempData.lastReqId = reqId;
         metadata[tokenId] = tempData;
-
         // Store request ID for NFT
         requestIdToTokenId[reqId] = tokenId;
     }
@@ -194,7 +195,8 @@ contract CrepCrypt is
         // '1' if the request is successful
         // '2' if the request is unsuccessful
         // Anything else indicates and API error
-        uint8 responseCode = abi.decode(response, (uint8));
+        emit RequestFulfilled(requestId, response);
+        uint8 responseCode = uint8(response[response.length - 1]);
 
         // Check if the request was successful
         if (responseCode != 1) {
@@ -242,9 +244,9 @@ contract CrepCrypt is
         req.initializeRequestForInlineJavaScript(source);
 
         // Init args for ChatGPT req
-        string[] memory args = new string[](3);
+        string[] memory args = new string[](2);
+        args[0] = tempData.description;
         args[1] = tempData.tokenURI;
-        args[0] = newDescription;
 
         req.setArgs(args);
         req.addDONHostedSecrets(
@@ -305,7 +307,7 @@ contract CrepCrypt is
 
             // Calculate how much Stablecoin is needed to buy the NFT
             /// @dev All x/USD pairs have 8 decimals in Chainlink Data Feeds
-            // TODO: Check this calculation is correct
+            // also assumes 18 decimals for Stablecoin
             uint256 stablecoinPrice = (tempData.price * 1e10) /
                 uint256(ethPrice);
 
@@ -421,8 +423,8 @@ contract CrepCrypt is
 
         // Init args for ChatGPT req
         string[] memory args = new string[](2);
-        args[1] = tempData.tokenURI;
         args[0] = tempData.description;
+        args[1] = tempData.tokenURI;
 
         req.setArgs(args);
         req.addDONHostedSecrets(
@@ -446,6 +448,10 @@ contract CrepCrypt is
 
         // Store request ID for NFT
         requestIdToTokenId[reqId] = tokenId;
+    }
+
+    function setMediator(address mediator, bool status) external onlyOwner {
+        mediators[mediator] = status;
     }
 
     modifier onlyMediators() {

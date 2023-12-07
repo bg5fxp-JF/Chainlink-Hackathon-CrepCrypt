@@ -1,4 +1,4 @@
-const CrepCryptAddress = 0x0B281cAbeDd2d06B3652BFCf0aEbBce138F674CE;
+const CrepCryptAddress = 0xa0946d6580F30e607c8a42CCF167cc4Af01e86b4;
 const CrepCryptAbi = [
     {
         "inputs": [],

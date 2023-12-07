@@ -1,24 +1,35 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.19;
 
 import "forge-std/Test.sol";
-import "../src/Counter.sol";
+import "../src/CrepCrypt.sol";
+import "forge-std/console.sol";
 
-contract CounterTest is Test {
-    Counter public counter;
+contract CrepCryptTest is Test {
+    CrepCrypt crepCrypt;
 
-    function setUp() public {
-        counter = new Counter();
-        counter.setNumber(0);
+    string SEPOLIA_FORK = vm.envString("SEPOLIA_FORK");
+    uint256 FORK_BLOCK_NUMBER = 4841971;
+
+    function setUp() public virtual {
+        crepCrypt = CrepCrypt(0x0B281cAbeDd2d06B3652BFCf0aEbBce138F674CE);
+
+        console.log("Setting Up");
+        console.log("SEPOLIA_FORK: %s", SEPOLIA_FORK);
+
+        uint sepoliaFork = vm.createFork(SEPOLIA_FORK);
+        vm.selectFork(sepoliaFork);
+        vm.roll(FORK_BLOCK_NUMBER);
+
+        console.log("Set Up Done");
     }
 
-    function testIncrement() public {
-        counter.increment();
-        assertEq(counter.number(), 1);
-    }
+    function testList() public {
+        uint256 price = 1 ether;
+        string
+            memory tokenURI = "https://gold-recent-cat-109.mypinata.cloud/ipfs/QmQpf3CfTPoi6YYjuTm1VYFNXS9hop9bt7AtyGhFyxyoAe";
+        string memory desc = "Jordan 4";
 
-    function testSetNumber(uint256 x) public {
-        counter.setNumber(x);
-        assertEq(counter.number(), x);
+        crepCrypt.listNFT{value: 0.1 ether}(price, tokenURI, desc);
     }
 }
