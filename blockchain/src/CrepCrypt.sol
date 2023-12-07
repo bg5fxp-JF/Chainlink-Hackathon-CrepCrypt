@@ -30,7 +30,37 @@ contract CrepCrypt is
     uint32 gasLimit = 300000;
     bytes32 donID;
     uint64 subscriptionId;
-    string sourceCode = "";
+    uint8 donHostedSecretsSlotID;
+    uint64 donHostedSecretsVersion;
+    string internal source =
+        "const openAIRequest = await Functions.makeHttpRequest({\n"
+        "  url: 'https://api.openai.com/v1/chat/completions',\n"
+        "  method: 'POST',\n"
+        "  headers: {\n"
+        "    'Content-Type': 'application/json',\n"
+        "    'Authorization': `Bearer ${secrets.openaiKey}`\n"
+        "  },\n"
+        "  data: {\n"
+        "    'model': 'gpt-4-vision-preview',\n"
+        "    'messages': [{\n"
+        "      'role': 'user',\n"
+        "      'content': [{\n"
+        "          'type': 'text',\n"
+        "          'text': 'I am sending you a picture of a ' + args[0] + '. Reply with ONLY '1' if the picture is a real ' + args[0] + ' reply with a 2 if this is not a ' + args[0]\n"
+        "          },\n"
+        "          {\n"
+        "          'type': 'image_url',\n"
+        "          'image_url': {\n"
+        "              'url': args[1]\n"
+        "          }\n"
+        "      }]\n"
+        "    }],\n"
+        "    'max_tokens': 300\n"
+        "  }\n"
+        "});\n\n"
+        "const response = openAIRequest.data.choices[0].message.content;\n\n"
+        "console.log(response);\n\n"
+        "return Functions.encodeString(response);";
 
     // NFT Config
     // TODO: Think of how to set it price
@@ -102,12 +132,18 @@ contract CrepCrypt is
         }
 
         FunctionsRequest.Request memory req;
-        req.initializeRequestForInlineJavaScript(sourceCode);
+        req.initializeRequestForInlineJavaScript(source);
 
         // Init args for ChatGPT req
         string[] memory args = new string[](2);
-        args[0] = tokenURI;
-        args[1] = description;
+        args[1] = tokenURI;
+        args[0] = description;
+
+        req.setArgs(args);
+        req.addDONHostedSecrets(
+            donHostedSecretsSlotID,
+            donHostedSecretsVersion
+        );
 
         uint256 tokenId = totalSupply() + 1;
 
@@ -195,15 +231,9 @@ contract CrepCrypt is
         transferFrom(address(this), tempData.currentOwner, tokenId);
     }
 
-    // TODO: Jacob - Complete function to allow a user who owns an NFT to relist it on the marketplace. Code will be similar to `listNFT`
-    // 1. They will need to pay fee again
-    // 2. They will need to update the metadata
-    // 3. They will need to send a new request to the oracle
-    // 4. They will need to transfer the NFT to the contract
     function relistNft(
         uint256 tokenId,
-        string memory newDescription,
-        string memory newUri
+        string memory newDescription
     ) external payable {
         Metadata memory tempData = metadata[tokenId];
         if (tempData.currentOwner != msg.sender) revert("Not the owner");
@@ -215,13 +245,18 @@ contract CrepCrypt is
         }
 
         FunctionsRequest.Request memory req;
-        req.initializeRequestForInlineJavaScript(sourceCode);
+        req.initializeRequestForInlineJavaScript(source);
 
         // Init args for ChatGPT req
         string[] memory args = new string[](3);
-        args[0] = tempData.tokenURI;
-        args[1] = newDescription;
-        args[2] = newUri;
+        args[1] = tempData.tokenURI;
+        args[0] = newDescription;
+
+        req.setArgs(args);
+        req.addDONHostedSecrets(
+            donHostedSecretsSlotID,
+            donHostedSecretsVersion
+        );
 
         // Update description in metadata
         tempData.description = newDescription;
@@ -395,12 +430,18 @@ contract CrepCrypt is
         Metadata memory tempData = metadata[tokenId];
 
         FunctionsRequest.Request memory req;
-        req.initializeRequestForInlineJavaScript(sourceCode);
+        req.initializeRequestForInlineJavaScript(source);
 
         // Init args for ChatGPT req
         string[] memory args = new string[](2);
-        args[0] = tempData.tokenURI;
-        args[1] = tempData.description;
+        args[1] = tempData.tokenURI;
+        args[0] = tempData.description;
+
+        req.setArgs(args);
+        req.addDONHostedSecrets(
+            donHostedSecretsSlotID,
+            donHostedSecretsVersion
+        );
 
         // Send request to Functions oracle
         bytes32 reqId = _sendRequest(
