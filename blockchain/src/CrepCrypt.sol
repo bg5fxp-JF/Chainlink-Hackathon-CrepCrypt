@@ -19,7 +19,9 @@ contract CrepCrypt is
 
     event UnexpectedRequestID(bytes32 requestId);
     event ListingFailed(uint256 tokenId);
-    event SaleConfirmed(uint256 tokenId, bool status);
+    event InvalidApiResponse(uint256 tokenId);
+    event SaleApproved(uint256 tokenId);
+    event SaleRejected(uint256 tokenId);
 
     // Price Feed Config
     AggregatorV3Interface internal dataFeed;
@@ -46,6 +48,8 @@ contract CrepCrypt is
     struct Redeemable {
         address token;
         uint256 amount;
+        address payable recipient;
+        bool claimed;
     }
 
     struct Metadata {
@@ -66,6 +70,7 @@ contract CrepCrypt is
 
     mapping(uint256 => Metadata) public metadata;
     mapping(bytes32 => uint256) public requestIdToTokenId;
+    mapping(address => bool) public mediators;
 
     constructor(
         address _router,
@@ -114,7 +119,12 @@ contract CrepCrypt is
             previousOwners: 0,
             lastReqId: 0x0,
             currentOwner: msg.sender,
-            redeemable: Redeemable({token: address(0), amount: 0})
+            redeemable: Redeemable({
+                token: address(0),
+                amount: 0,
+                recipient: payable(address(0)),
+                claimed: false
+            })
         });
 
         // Send request to Functions oracle
@@ -151,22 +161,16 @@ contract CrepCrypt is
         // Check if NFT exists
         bool exists = _ownerOf(tokenId) != address(0);
 
-        /// @dev We expect our ChatGPT prompt to return '1' if the request is successful
+        /// @dev We expect our ChatGPT prompt to return
+        // '1' if the request is successful
+        // '2' if the request is unsuccessful
+        // Anything else indicates and API error
         uint8 responseCode = abi.decode(response, (uint8));
 
         // Check if the request was successful
         if (responseCode != 1) {
-            emit ListingFailed(tokenId);
-
-            // If the NFT exists we transfer it back to the owner
-            // TODO: Integration test to check this doesn't exceed functions gas limit
-            if (exists) {
-                transferFrom(
-                    address(this),
-                    metadata[tokenId].currentOwner,
-                    tokenId
-                );
-            }
+            if (responseCode == 2) emit InvalidApiResponse(tokenId);
+            else emit ListingFailed(tokenId);
 
             // End early if the request failed
             return;
@@ -182,15 +186,14 @@ contract CrepCrypt is
         }
     }
 
-    // TODO: Jacob - Complete function to allow a user who has called `listNFT` to remove their NFT from the marketplace
     function unlistNft(uint256 tokenId) external {
         Metadata memory tempData = metadata[tokenId];
 
         if (tempData.currentOwner != msg.sender) revert("Not the owner");
         if (tempData.redeemable.amount != 0) revert("NFT is already sold");
-        // get listing fee back
-        (bool success, ) = payable(msg.sender).call{value: fee}("");
-        if (!success) revert("unsuccessful payment");
+
+        // Transfer NFT back to owner
+        transferFrom(address(this), tempData.currentOwner, tokenId);
     }
 
     // TODO: Jacob - Complete function to allow a user who owns an NFT to relist it on the marketplace. Code will be similar to `listNFT`
@@ -261,7 +264,9 @@ contract CrepCrypt is
             require(msg.value == tempData.price);
             tempRedeemable = Redeemable({
                 token: address(0),
-                amount: tempData.price
+                amount: tempData.price + fee,
+                recipient: payable(address(0)),
+                claimed: false
             });
         } else {
             require(token != address(0));
@@ -274,12 +279,14 @@ contract CrepCrypt is
             // Calculate how much Stablecoin is needed to buy the NFT
             /// @dev All x/USD pairs have 8 decimals in Chainlink Data Feeds
             // TODO: Check this calculation is correct
-            uint256 stablecoinPrice = (tempData.price * 1e8) /
+            uint256 stablecoinPrice = (tempData.price * 1e10) /
                 uint256(ethPrice);
 
             tempRedeemable = Redeemable({
                 token: token,
-                amount: stablecoinPrice
+                amount: stablecoinPrice + fee,
+                recipient: payable(address(0)),
+                claimed: false
             });
 
             // Transfer Stablecoin from buyer to contract
@@ -305,12 +312,57 @@ contract CrepCrypt is
         metadata[tokenId] = tempData;
     }
 
-    function confirmSale(uint256 tokenId, bool status) external nonReentrant {
+    function confirmSale(uint256 tokenId, bool approval) external nonReentrant {
         Sale memory tempSale = sales[tokenId];
 
         if (tempSale.buyer != msg.sender) revert("Not the buyer");
 
-        tempSale.buyerApproved = status;
+        tempSale.buyerApproved = approval;
+        sales[tokenId] = tempSale;
+
+        if (approval) {
+            // Assign seller as recipient of payment
+            metadata[tokenId].redeemable.recipient = payable(tempSale.seller);
+
+            // Transfer NFT to buyer
+            safeTransferFrom(address(this), msg.sender, tokenId);
+
+            emit SaleApproved(tokenId);
+        } else {
+            emit SaleRejected(tokenId);
+        }
+    }
+
+    function sellerClaim(uint256 tokenId) external {
+        Metadata memory tempData = metadata[tokenId];
+        if (tempData.redeemable.recipient != msg.sender)
+            revert("Not the seller");
+        if (tempData.redeemable.amount == 0) revert("NFT is not sold");
+        if (tempData.redeemable.claimed) revert("Already claimed");
+
+        tempData.redeemable.claimed = true;
+        metadata[tokenId] = tempData;
+
+        /// Transfer payment to seller
+        if (tempData.redeemable.token == address(0)) {
+            (bool success, ) = payable(msg.sender).call{
+                value: tempData.redeemable.amount
+            }("");
+            if (!success) revert("unsuccessful payment");
+        } else {
+            require(
+                IERC20(tempData.redeemable.token).transfer(
+                    msg.sender,
+                    tempData.redeemable.amount
+                )
+            );
+        }
+    }
+
+    function finaliseSale(uint256 tokenId, bool status) external onlyMediators {
+        Sale memory tempSale = sales[tokenId];
+
+        if (tempSale.buyerApproved) revert("Sale already confirmed");
 
         if (status) {
             Metadata memory tempData = metadata[tokenId];
@@ -331,17 +383,47 @@ contract CrepCrypt is
             }
 
             // Transfer NFT to buyer
-            safeTransferFrom(address(this), msg.sender, tokenId);
+            safeTransferFrom(address(this), tempSale.buyer, tokenId);
+        } else {
+            // Transfer NFT back to seller
+            safeTransferFrom(address(this), tempSale.seller, tokenId);
         }
-
-        // ADD logic to reset metadata
-
-        emit SaleConfirmed(tokenId, status);
     }
 
-    function finaliseSale(uint256 tokenId, bool status) external onlyOwner {}
-    // Unlist NFTs
     // Reclaim listing fee
     // Withdraw funds
-    // Update metadata
+
+    function retryListing(uint256 tokenId) external {
+        Metadata memory tempData = metadata[tokenId];
+
+        FunctionsRequest.Request memory req;
+        req.initializeRequestForInlineJavaScript(sourceCode);
+
+        // Init args for ChatGPT req
+        string[] memory args = new string[](2);
+        args[0] = tempData.tokenURI;
+        args[1] = tempData.description;
+
+        // Send request to Functions oracle
+        bytes32 reqId = _sendRequest(
+            req.encodeCBOR(),
+            subscriptionId,
+            gasLimit,
+            donID
+        );
+
+        // Store latest request ID for NFT
+        tempData.lastReqId = reqId;
+
+        // Store metadata for NFT
+        metadata[tokenId] = tempData;
+
+        // Store request ID for NFT
+        requestIdToTokenId[reqId] = tokenId;
+    }
+
+    modifier onlyMediators() {
+        require(msg.sender == owner() || mediators[msg.sender]);
+        _;
+    }
 }
