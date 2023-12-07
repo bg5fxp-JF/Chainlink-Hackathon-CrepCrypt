@@ -25,7 +25,6 @@ contract CrepCrypt is
 
     // Price Feed Config
     AggregatorV3Interface internal dataFeed;
-    address immutable ETHUSD;
 
     // Functions Config
     uint32 gasLimit = 300000;
@@ -84,7 +83,7 @@ contract CrepCrypt is
     {
         donID = _donID;
         subscriptionId = _subscriptionId;
-        ETHUSD = _ethUsd;
+        dataFeed = AggregatorV3Interface(_ethUsd);
     }
 
     function listNFT(
@@ -273,8 +272,7 @@ contract CrepCrypt is
             require(amount != 0);
 
             // Get latest price of ETH in USD
-            (, int256 ethPrice, , , ) = AggregatorV3Interface(ETHUSD)
-                .latestRoundData();
+            (, int256 ethPrice, , , ) = dataFeed.latestRoundData();
 
             // Calculate how much Stablecoin is needed to buy the NFT
             /// @dev All x/USD pairs have 8 decimals in Chainlink Data Feeds
