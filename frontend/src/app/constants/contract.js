@@ -1,4 +1,4 @@
-const CrepCryptAddress = 0xa0946d6580F30e607c8a42CCF167cc4Af01e86b4;
+const CrepCryptAddress = 0x8b53b58050ACa4Da6e2D7f738aD9112fA122ac49;
 const CrepCryptAbi = [
     {
         "inputs": [],
@@ -415,6 +415,11 @@ const CrepCryptAbi = [
                 "internalType": "string",
                 "name": "newDescription",
                 "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "newTokenURI",
+                "type": "string"
             }
         ],
         "name": "relistNft",
@@ -430,6 +435,25 @@ const CrepCryptAbi = [
                 "internalType": "bytes32",
                 "name": "id",
                 "type": "bytes32"
+            }
+        ],
+        "name": "RequestFulfilled",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "bytes32",
+                "name": "requestId",
+                "type": "bytes32"
+            },
+            {
+                "indexed": false,
+                "internalType": "bytes",
+                "name": "response",
+                "type": "bytes"
             }
         ],
         "name": "RequestFulfilled",
@@ -565,6 +589,24 @@ const CrepCryptAbi = [
             }
         ],
         "name": "setApprovalForAll",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "mediator",
+                "type": "address"
+            },
+            {
+                "internalType": "bool",
+                "name": "status",
+                "type": "bool"
+            }
+        ],
+        "name": "setMediator",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
