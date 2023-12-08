@@ -63,7 +63,7 @@ contract CrepCrypt is
         "});\n\n"
         "const response = openAIRequest.data.choices[0].message.content;\n\n"
         "console.log(response);\n\n"
-        "return Functions.encodeString(response);";
+        "return Functions.encodeUint256(response);";
 
     // NFT Config
     // TODO: Think of how to set it price
@@ -196,7 +196,7 @@ contract CrepCrypt is
         // '2' if the request is unsuccessful
         // Anything else indicates and API error
         emit RequestFulfilled(requestId, response);
-        uint8 responseCode = uint8(response[response.length - 1]);
+        uint256 responseCode = abi.decode(response, (uint256));
 
         // Check if the request was successful
         if (responseCode != 1) {

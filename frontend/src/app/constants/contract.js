@@ -1,5 +1,5 @@
-export const CrepCryptAddress = "0x8b53b58050aca4da6e2d7f738ad9112fa122ac49";
-export const CrepCryptAbi = [
+const CrepCryptAddress = 0x12b8a3c615d23ddda502e40e76ba776e96a4cc2e;
+const CrepCryptAbi = [
 	{
 		inputs: [],
 		name: "acceptOwnership",

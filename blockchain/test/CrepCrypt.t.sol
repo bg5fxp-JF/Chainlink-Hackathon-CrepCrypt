@@ -12,7 +12,7 @@ contract CrepCryptTest is Test {
     uint256 FORK_BLOCK_NUMBER = 4841971;
 
     function setUp() public virtual {
-        crepCrypt = CrepCrypt(0x0B281cAbeDd2d06B3652BFCf0aEbBce138F674CE);
+        crepCrypt = CrepCrypt(0x8b53b58050ACa4Da6e2D7f738aD9112fA122ac49);
 
         console.log("Setting Up");
         console.log("SEPOLIA_FORK: %s", SEPOLIA_FORK);
