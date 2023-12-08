@@ -64,7 +64,7 @@ contract CrepCrypt is
         "});\n\n"
         "const response = openAIRequest.data.choices[0].message.content;\n\n"
         "console.log(response);\n\n"
-        "return Functions.encodeUint256(response);";
+        "return Functions.encodeUint256(Number(response));";
 
     // NFT Config
     // TODO: Think of how to set it price
