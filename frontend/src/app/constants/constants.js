@@ -1,3 +1,4 @@
+export const LISTING_FEE = "0.1";
 export const squareData = [
 	{
 		id: 1,
@@ -228,7 +229,7 @@ export const FAQData = [
 
 	{
 		title: "How do I buy shoes?",
-		text: "Pick the shoes you like, and click buy now. This will take you through to our payment portal, where you'll be able to purchase the shoes using any of our supported cryptocurrencies."
+		text: "Pick the shoes you like, and click buy now. This will take you through to our payment portal, where you'll be able to purchase the shoes using any of our supported cryptocurrencies.",
 	},
 	{
 		title: "How does it verify?",

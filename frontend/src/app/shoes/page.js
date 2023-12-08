@@ -1,5 +1,4 @@
-import ShoeCard from "../components/ShoeCard";
-import { ShoeDummyData } from "../constants/constants";
+import Shoes from "./components/Shoes";
 export const metadata = {
 	title: "CrepCrypt | Buy Shoes",
 	description:
@@ -63,13 +62,7 @@ export default function page() {
 					</select>
 				</div>
 			</div>
-			<div className="grid justify-between gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-				{ShoeDummyData.map(({ id, img, title, price }) => {
-					return (
-						<ShoeCard key={id} id={id} img={img} title={title} price={price} />
-					);
-				})}
-			</div>
+			<Shoes />
 		</div>
 	);
 }
