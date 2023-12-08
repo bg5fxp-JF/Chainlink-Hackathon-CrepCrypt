@@ -1,0 +1,1 @@
+forge create src/CrepCrypt.sol:CrepCrypt --chain sepolia --optimizer-runs 200 --verify --etherscan-api-key NA3299PRH9JK3CPRA3URPEAIT67A86DU84 --private-key 62ad2d77a544d34dbcba82ff3e155783954901a0a486e0c52ee773d5e24de5e2 --constructor-args 0xb83E47C2bC239B3bf370bc41e1459A34b41238D0
