@@ -129,7 +129,7 @@ export default function ListForm() {
 	const handleSubmit = async (e) => {
 		e.preventDefault();
 		if (!isConnected) {
-			toast("Not Connected. Please Connect Wallet");
+			toast.warn("Not Connected. Please Connect Wallet.");
 			return;
 		}
 		const desc = formatFormData(formData);

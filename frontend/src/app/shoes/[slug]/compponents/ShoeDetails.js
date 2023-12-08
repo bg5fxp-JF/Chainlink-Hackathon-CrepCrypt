@@ -10,6 +10,7 @@ export default function ShoeDetails() {
 	const searchParams = useSearchParams();
 	const shoeId = searchParams.get("id");
 	const shoeData = ShoeDummyData.find((item) => item.id == shoeId);
+	const isOwnerofShoe = true;
 
 	// Splitting the description into parts
 	const parts = shoeData.description.split(" | ");
@@ -41,7 +42,7 @@ export default function ShoeDetails() {
 							</div>
 						</div>
 						<p className="hidden font-light text-reg text-accent2 sm:block">
-							Owned by {shoeData.current_owner}
+							Owned by {isOwnerofShoe ? "You" : shoeData.current_owner}
 						</p>
 						<p className="block font-light text-reg text-accent2 sm:hidden">
 							Owned by {formatAddress(shoeData.current_owner)}
@@ -62,11 +63,19 @@ export default function ShoeDetails() {
 						<span className="font-medium ">Description:</span> {description}
 					</h4>
 					{/** TODO: Needs to be changed to for actual Buy Now */}
-					<CustomLinkButton
-						text="Buy Now"
-						styles="flex justify-center text-white mt-4 bg-primaryColor "
-						link="/shoes"
-					/>
+					{!isOwnerofShoe ? (
+						<CustomLinkButton
+							text="Buy Now"
+							styles="flex justify-center text-white mt-4 bg-primaryColor "
+							link="/shoes"
+						/>
+					) : (
+						<CustomLinkButton
+							text="Unlist Shoe"
+							styles="flex justify-center text-white mt-4 bg-primaryColor "
+							link="/"
+						/>
+					)}
 				</div>
 				<div className="flex items-center">
 					<Image
