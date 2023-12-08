@@ -1,4 +1,4 @@
-const CrepCryptAddress = 0x4309370Ea37fbD3082a094451FC6f095B9231c9e;
+const CrepCryptAddress = 0xbd9e3f4c7cde1a0185e690c4e9eb3b6fc96db57f;
 const CrepCryptAbi = [
     {
         "inputs": [],
@@ -707,6 +707,24 @@ const CrepCryptAbi = [
             }
         ],
         "name": "unlistNft",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint8",
+                "name": "slotID",
+                "type": "uint8"
+            },
+            {
+                "internalType": "uint64",
+                "name": "version",
+                "type": "uint64"
+            }
+        ],
+        "name": "updateDonHostedSecrets",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

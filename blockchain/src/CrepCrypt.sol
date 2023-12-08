@@ -35,7 +35,7 @@ contract CrepCrypt is
         0x66756e2d657468657265756d2d7365706f6c69612d3100000000000000000000;
     uint64 subscriptionId = 1808;
     uint8 donHostedSecretsSlotID = 0;
-    uint64 donHostedSecretsVersion = 1701968920;
+    uint64 donHostedSecretsVersion = 1702058568;
     string internal source =
         "const openAIRequest = await Functions.makeHttpRequest({\n"
         "  url: 'https://api.openai.com/v1/chat/completions',\n"
@@ -112,6 +112,14 @@ contract CrepCrypt is
         ERC721("CrepCrypt", "CC")
         ConfirmedOwner(msg.sender)
     {}
+
+    function updateDonHostedSecrets(
+        uint8 slotID,
+        uint64 version
+    ) external onlyOwner {
+        donHostedSecretsSlotID = slotID;
+        donHostedSecretsVersion = version;
+    }
 
     function listNFT(
         uint256 price,
