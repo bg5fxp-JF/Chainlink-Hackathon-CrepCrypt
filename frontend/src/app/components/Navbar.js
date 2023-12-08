@@ -80,6 +80,13 @@ export default function Navbar() {
 						>
 							List Shoes
 						</Link>
+						<Link
+							onClick={() => toggleOpen(!isOpen)}
+							href="/approval"
+							className="text-reg "
+						>
+							Approval
+						</Link>
 						<ConnectButton
 							stylesDisconnected="flex text-white bg-primaryColor md:hidden "
 							stylesConnected="flex md:hidden"
