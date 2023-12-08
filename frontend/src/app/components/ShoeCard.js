@@ -7,7 +7,7 @@ export default function ShoeCard({ id, img, title, price }) {
 			href={`/shoes/${title}?id=${id}`}
 			className="group max-w-[400px] space-y-3 mx-auto pt-10 cursor-pointer  sm:w-full "
 		>
-			<div className="overflow-hidden rounded-lg">
+			<div className="relative overflow-hidden rounded-lg">
 				<Image
 					src={img}
 					width={400}
@@ -16,6 +16,9 @@ export default function ShoeCard({ id, img, title, price }) {
 					alt="Shoe Card"
 					priority={true}
 				/>
+				<div className="absolute flex justify-center items-center w-3 h-3 top-4 right-4 p-5 rounded bg-gray-500 bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-40   shadow-lg ">
+					{id}
+				</div>
 			</div>
 			<div className="flex flex-col">
 				<h4 className="text-2xl">{title}</h4>

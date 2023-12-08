@@ -24,7 +24,7 @@ export default function ShoeDetails() {
 	}
 
 	return (
-		<div className="flex flex-col w-full max-w-[1440px] gap-8 mx-auto px-6 pt-24 pb-12 sm:px-16">
+		<div className="flex flex-col w-full max-w-[1440px] min-h-screen gap-8 mx-auto px-6 pt-24 pb-12 sm:px-16">
 			<div className="flex flex-col-reverse w-full mx-auto gap-4 md:flex-row md:justify-between">
 				<div className="flex flex-col  gap-4 md:w-1/2 ">
 					<span className="block text-xsm font-medium text-primaryColor md:text-sm">
