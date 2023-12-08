@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity 0.8.21;
 
 import {FunctionsClient} from "@chainlink/contracts/src/v0.8/functions/dev/v1_0_0/FunctionsClient.sol";
 import {ConfirmedOwner} from "@chainlink/contracts/src/v0.8/shared/access/ConfirmedOwner.sol";
@@ -8,7 +8,6 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import {ERC721Enumerable, ERC721} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "forge-std/console.sol";
 
 contract CrepCrypt is
     FunctionsClient,
@@ -118,7 +117,6 @@ contract CrepCrypt is
         string memory tokenURI,
         string memory description
     ) external payable {
-        console.log("Here 0");
         if (msg.value != fee) {
             revert("Fee is not correct");
         }
@@ -128,22 +126,23 @@ contract CrepCrypt is
         if (bytes(description).length == 0) {
             revert("Description is not correct");
         }
-        console.log("Here 1");
         FunctionsRequest.Request memory req;
         req.initializeRequestForInlineJavaScript(source);
-        console.log("Here 2");
+
         // Init args for ChatGPT req
         string[] memory args = new string[](2);
         args[0] = description;
         args[1] = tokenURI;
+
         req.setArgs(args);
-        console.log("Here 3");
+
         req.addDONHostedSecrets(
             donHostedSecretsSlotID,
             donHostedSecretsVersion
         );
-        console.log("Here 1");
+
         uint256 tokenId = totalSupply() + 1;
+
         Metadata memory tempData = Metadata({
             price: price,
             tokenURI: tokenURI,
@@ -165,10 +164,11 @@ contract CrepCrypt is
             gasLimit,
             donID
         );
-        console.log("Here 1");
+
         // Store metada for NFT
         tempData.lastReqId = reqId;
         metadata[tokenId] = tempData;
+
         // Store request ID for NFT
         requestIdToTokenId[reqId] = tokenId;
     }
@@ -229,7 +229,8 @@ contract CrepCrypt is
 
     function relistNft(
         uint256 tokenId,
-        string memory newDescription
+        string memory newDescription,
+        string memory newTokenURI
     ) external payable {
         Metadata memory tempData = metadata[tokenId];
         if (tempData.currentOwner != msg.sender) revert("Not the owner");
@@ -239,14 +240,18 @@ contract CrepCrypt is
         if (bytes(newDescription).length == 0) {
             revert("Description is not correct");
         }
+        if (bytes(newTokenURI).length == 0) {
+            revert("Token URI is not correct");
+        }
 
         FunctionsRequest.Request memory req;
         req.initializeRequestForInlineJavaScript(source);
 
         // Init args for ChatGPT req
-        string[] memory args = new string[](2);
-        args[0] = tempData.description;
+        string[] memory args = new string[](3);
+        args[0] = newDescription;
         args[1] = tempData.tokenURI;
+        args[2] = newTokenURI;
 
         req.setArgs(args);
         req.addDONHostedSecrets(
