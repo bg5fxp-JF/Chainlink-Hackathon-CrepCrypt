@@ -35,6 +35,9 @@ export default function Navbar() {
 						<Link href="/listshoes" className="text-reg ">
 							List Shoes
 						</Link>
+						<Link href="/approval" className="text-reg ">
+							Approval
+						</Link>
 					</div>
 				</div>
 				<FiMenu
