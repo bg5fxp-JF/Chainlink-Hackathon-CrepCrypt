@@ -23,6 +23,7 @@ contract CrepCrypt is
     event SaleApproved(uint256 tokenId);
     event SaleRejected(uint256 tokenId);
     event RequestFulfilled(bytes32 requestId, bytes response);
+    event EmptyResponse(uint256 tokenId);
 
     // Price Feed Config
     AggregatorV3Interface internal dataFeed =
@@ -185,6 +186,11 @@ contract CrepCrypt is
         // Check if the request ID is valid
         if (tokenId == 0) {
             emit UnexpectedRequestID(requestId);
+            return;
+        }
+
+        if (response.length == 0) {
+            emit EmptyResponse(tokenId);
             return;
         }
 
