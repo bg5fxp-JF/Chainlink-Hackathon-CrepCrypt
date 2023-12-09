@@ -62,4 +62,4 @@ This project deepened our understanding of smart contract development, particula
 
 ## What's next for CrepCrypt
 
-Moving forward, we plan to expand CrepCrypt's capabilities, including more advanced AI algorithms for better authentication and exploring partnerships with shoe brands and retailers. We are also looking into scaling the platform to support other types of luxury goods, further broadening our impact on the e-commerce market.
+Moving forward, we plan to expand CrepCrypt's capabilities, including more advanced AI algorithms for better authentication and exploring partnerships with shoe brands and retailers. We are also looking into scaling the platform to support other types of luxury goods, further broadening our impact on the e-commerce market. Lastly, with the updates from OpenAI we'll be able to develop our own ChatGPT bot that can focus on the authentication of sneakers and all other luxury goods.
