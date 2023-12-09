@@ -36,35 +36,6 @@ contract CrepCrypt is
     uint64 subscriptionId = 1808;
     uint8 donHostedSecretsSlotID = 0;
     uint64 donHostedSecretsVersion = 1702058568;
-    string internal source =
-        "const openAIRequest = await Functions.makeHttpRequest({\n"
-        "  url: 'https://api.openai.com/v1/chat/completions',\n"
-        "  method: 'POST',\n"
-        "  headers: {\n"
-        "    'Content-Type': 'application/json',\n"
-        "    'Authorization': `Bearer ${secrets.apiKey}`\n"
-        "  },\n"
-        "  data: {\n"
-        "    'model': 'gpt-4-vision-preview',\n"
-        "    'messages': [{\n"
-        "      'role': 'user',\n"
-        "      'content': [{\n"
-        "          'type': 'text',\n"
-        "          'text': 'I am sending you a picture of a ' + args[0] + '. Reply with ONLY '1' if the picture is a real ' + args[0] + ' reply with a 2 if this is not a ' + args[0]\n"
-        "          },\n"
-        "          {\n"
-        "          'type': 'image_url',\n"
-        "          'image_url': {\n"
-        "              'url': args[1]\n"
-        "          }\n"
-        "      }]\n"
-        "    }],\n"
-        "    'max_tokens': 300\n"
-        "  }\n"
-        "});\n\n"
-        "const response = openAIRequest.data.choices[0].message.content;\n\n"
-        "console.log(response);\n\n"
-        "return Functions.encodeUint256(Number(response));";
 
     // NFT Config
     // TODO: Think of how to set it price
@@ -124,7 +95,8 @@ contract CrepCrypt is
     function listNFT(
         uint256 price,
         string memory tokenURI,
-        string memory description
+        string memory description,
+        string memory source
     ) external payable {
         if (msg.value != fee) {
             revert("Fee is not correct");
@@ -244,7 +216,8 @@ contract CrepCrypt is
     function relistNft(
         uint256 tokenId,
         string memory newDescription,
-        string memory newTokenURI
+        string memory newTokenURI,
+        string memory source
     ) external payable {
         Metadata memory tempData = metadata[tokenId];
         if (tempData.currentOwner != msg.sender) revert("Not the owner");
@@ -430,7 +403,7 @@ contract CrepCrypt is
     }
 
     /// @dev requires tokenId owner to approve this contract
-    function retryListing(uint256 tokenId) external {
+    function retryListing(uint256 tokenId, string memory source) external {
         Metadata memory tempData = metadata[tokenId];
 
         // Ensure the NFT exists
