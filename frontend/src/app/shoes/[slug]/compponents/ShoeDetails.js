@@ -5,6 +5,7 @@ import Image from "next/image";
 
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 import CustomLinkButton from "@/app/components/CustomLinkButton";
+import { useContractWrite } from "wagmi";
 
 export default function ShoeDetails() {
 	const searchParams = useSearchParams();
@@ -19,6 +20,21 @@ export default function ShoeDetails() {
 	const brand = parts[0].split("Brand: ")[1];
 	const size = parts[1].split("Size: ")[1];
 	const description = parts[2].split("Description: ")[1];
+
+	const { write: unlistNftFunc } = useContractWrite({
+		address: CrepCryptAddress,
+		abi: CrepCryptAbi,
+		functionName: "unlistNft",
+		onSuccess() {},
+		onError() {},
+	});
+	const { write: buyShoe } = useContractWrite({
+		address: CrepCryptAddress,
+		abi: CrepCryptAbi,
+		functionName: "buyNft",
+		onSuccess() {},
+		onError() {},
+	});
 
 	function formatAddress(address) {
 		return address.slice(0, 6) + "..." + address.slice(address.length - 4);
@@ -45,7 +61,8 @@ export default function ShoeDetails() {
 							Owned by {isOwnerofShoe ? "You" : shoeData.current_owner}
 						</p>
 						<p className="block font-light text-reg text-accent2 sm:hidden">
-							Owned by {formatAddress(shoeData.current_owner)}
+							Owned by{" "}
+							{isOwnerofShoe ? "You" : formatAddress(shoeData.current_owner)}
 						</p>
 					</div>
 					<h4 className="text-lg font-medium  md:text-2xl">{shoeData.price}</h4>
