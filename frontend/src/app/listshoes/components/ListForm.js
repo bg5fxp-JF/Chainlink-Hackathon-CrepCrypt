@@ -31,7 +31,7 @@ export default function ListForm() {
 		functionName: "listNFT",
 		value: parseEther(LISTING_FEE),
 		onSuccess() {
-			toast(`Successfully Listed ${formData.name}`);
+			toast.success(`Successfully Listed ${formData.name}`);
 			setFormData({
 				name: "",
 				tokenId: "",
@@ -44,7 +44,7 @@ export default function ListForm() {
 			setImage(null);
 		},
 		onError(error) {
-			toast(`${error.message}`);
+			toast.error(`${error.message}`);
 		},
 	});
 	const { write: relistNftFunc } = useContractWrite({
