@@ -1,5 +1,7 @@
 # CrepCrypt - A Decentralized Shoe Marketplace
 
+[VIDEO PRESENTATION](https://youtu.be/kzF0t-_DLhk)
+
 ## Inspiration
 
 In recent years, online shoe marketplaces have faced numerous challenges that affect the confidence of both buyers and sellers. Issues such as the authenticity of shoes have left many customers frustrated and demanding refunds. The problem of dishonest product descriptions is equally troubling. Often, misleading pictures and descriptions result in buyer disappointment and seller hassles with returns. Additionally, the lack of information about the number of previous owners and the true extent of shoe usage leads to skepticism and devaluation.
