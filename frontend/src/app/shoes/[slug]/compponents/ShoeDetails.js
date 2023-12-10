@@ -5,13 +5,13 @@ import Image from "next/image";
 
 import { RiVerifiedBadgeFill } from "react-icons/ri";
 import CustomLinkButton from "@/app/components/CustomLinkButton";
-import { useContractWrite } from "wagmi";
+import { useAccount, useContractWrite } from "wagmi";
+import { CrepCryptAbi, CrepCryptAddress } from "@/app/constants/contract";
 
 export default function ShoeDetails() {
 	const searchParams = useSearchParams();
 	const shoeId = searchParams.get("id");
 	const shoeData = ShoeDummyData.find((item) => item.id == shoeId);
-	const isOwnerofShoe = true;
 
 	// Splitting the description into parts
 	const parts = shoeData.description.split(" | ");
@@ -36,6 +36,8 @@ export default function ShoeDetails() {
 		onError() {},
 	});
 
+	const { address } = useAccount();
+
 	function formatAddress(address) {
 		return address.slice(0, 6) + "..." + address.slice(address.length - 4);
 	}
@@ -58,11 +60,16 @@ export default function ShoeDetails() {
 							</div>
 						</div>
 						<p className="hidden font-light text-reg text-accent2 sm:block">
-							Owned by {isOwnerofShoe ? "You" : shoeData.current_owner}
+							Owned by{" "}
+							{shoeData.current_owner == address
+								? "You"
+								: shoeData.current_owner}
 						</p>
 						<p className="block font-light text-reg text-accent2 sm:hidden">
 							Owned by{" "}
-							{isOwnerofShoe ? "You" : formatAddress(shoeData.current_owner)}
+							{shoeData.current_owner == address
+								? "You"
+								: formatAddress(shoeData.current_owner)}
 						</p>
 					</div>
 					<h4 className="text-lg font-medium  md:text-2xl">{shoeData.price}</h4>
@@ -80,7 +87,7 @@ export default function ShoeDetails() {
 						<span className="font-medium ">Description:</span> {description}
 					</h4>
 					{/** TODO: Needs to be changed to for actual Buy Now */}
-					{!isOwnerofShoe ? (
+					{shoeData.current_owner != address ? (
 						<CustomLinkButton
 							text="Buy Now"
 							styles="flex justify-center text-white mt-4 bg-primaryColor "

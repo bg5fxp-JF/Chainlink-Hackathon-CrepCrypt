@@ -8,6 +8,7 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { parseEther } from "viem";
 import { LISTING_FEE } from "@/app/constants/constants";
+import { openAIRequest } from "@/app/constants/prompt1";
 
 export default function ListForm() {
 	const [formData, setFormData] = useState({
@@ -52,7 +53,7 @@ export default function ListForm() {
 		functionName: "relistNft",
 		value: parseEther(LISTING_FEE),
 		onSuccess() {
-			toast(`Successfully Relisted ${formData.name}`);
+			toast.success(`Successfully Relisted ${formData.name}`);
 			setFormData({
 				name: "",
 				tokenId: "",
@@ -65,7 +66,7 @@ export default function ListForm() {
 			setImage(null);
 		},
 		onError(error) {
-			toast(`${error.message}`);
+			toast.error(`${error.message}`);
 		},
 	});
 
@@ -135,17 +136,11 @@ export default function ListForm() {
 		const desc = formatFormData(formData);
 		// check if user wants to relist token id
 		if (formData.tokenId >= 1) {
-			// const { data } = useContractRead({
-			//     address: CrepCryptAddress,
-			//     abi: CrepCryptAbi,
-			//     functionName: "metadata",
-			//     args: [formData.tokenId],
-			// });
 			await pinataUpload(image);
-			// call list nft function
+			// call relist nft function
 			const tokenUri =
 				process.env.NEXT_PUBLIC_GATEWAY_URL + "/ipfs/" + formData.tokenUri;
-			const relistNftArgs = [formData.tokenId, desc];
+			const relistNftArgs = [formData.tokenId, desc, tokenUri, openAIRequest];
 
 			relistNftFunc({ args: relistNftArgs });
 		} else {
@@ -153,7 +148,7 @@ export default function ListForm() {
 			// call list nft function
 			const tokenUri =
 				process.env.NEXT_PUBLIC_GATEWAY_URL + "/ipfs/" + formData.tokenUri;
-			const listNftArgs = [formData.price, tokenUri, desc];
+			const listNftArgs = [formData.price, tokenUri, desc, openAIRequest];
 
 			listNftFunc({ args: listNftArgs });
 		}

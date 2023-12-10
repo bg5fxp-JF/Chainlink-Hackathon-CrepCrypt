@@ -1,5 +1,7 @@
 "use client";
 import { IoSend } from "react-icons/io5";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Approval() {
 	return (
@@ -15,15 +17,23 @@ export default function Approval() {
 				<button
 					className="text-reg flex px-8 py-3 rounded-full transition-all active:scale-95  justify-center text-white mt-4 bg-primaryColor"
 					type="button"
+					onClick={() => {
+						toast.success("Approved Sale");
+					}}
 				>
 					Approve Sale
 				</button>
+
 				<button
 					className="text-reg flex px-8 py-3 rounded-full transition-all active:scale-95  justify-center text-white mt-4 bg-primaryColor"
 					type="button"
+					onClick={() => {
+						toast.success("Dissaproved Sale");
+					}}
 				>
 					Dissaprove Sale
 				</button>
+				<ToastContainer />
 
 				<div className=" relative rounded-lg mt-5">
 					<div className="absolute flex justify-center items-center w-full h-full  rounded-lg bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-10   shadow-lg ">
