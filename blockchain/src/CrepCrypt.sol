@@ -203,10 +203,6 @@ contract CrepCrypt is
         }
     }
 
-    function mint(address to, uint256 tokenId) external onlyOwner {
-        _mint(to, tokenId);
-    }
-
     function unlistNft(uint256 tokenId) external {
         Metadata memory tempData = metadata[tokenId];
 
